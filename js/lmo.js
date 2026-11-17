@@ -26,10 +26,10 @@
   // Animaties per Webflow-klasse. Werkt hetzelfde als het attribute in de
   // Designer zetten; handig voor terugkerende onderdelen.
   var perKlasse = {
-    "fade-up": [".themas-intro", ".gemeenten-blok", ".kerncijfers-intro", ".evenement",
-                ".sectie-kop", ".praktijkkaarten", ".beeldtekst-inhoud", ".nieuwsbrief-blok"],
-    "fade":    [".beeldtekst-foto"],
-    "stagger": [".themalijst", ".cijfers", ".tijdlijn"]
+    "fade-up": [".themes-intro", ".municipalities-block", ".key-figures-intro", ".event",
+                ".section-header", ".practice-cards", ".image-text-content", ".newsletter-block"],
+    "fade":    [".image-text-photo"],
+    "stagger": [".theme-list", ".figures", ".timeline"]
   };
   Object.keys(perKlasse).forEach(function (soort) {
     document.querySelectorAll(perKlasse[soort].join(",")).forEach(function (el) {
@@ -93,9 +93,9 @@
      Raster 2×2: boog linksboven, cirkel rechtsboven, blad linksonder,
      kwart rechtsonder. Stapt alleen als de hero in beeld is. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    var raster = document.querySelector(".vormen");
+    var raster = document.querySelector(".shapes");
     if (!raster) return;
-    var vormen = gsap.utils.toArray(".vormen > .vorm");
+    var vormen = gsap.utils.toArray(".shapes > .shape");
     if (vormen.length !== 4) return;
 
     // vakken met de klok mee: 0 linksboven, 1 rechtsboven, 2 rechtsonder, 3 linksonder
@@ -144,7 +144,7 @@
      "20 mei" blijft staan). De echte waarde staat in de HTML. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
     var getallen = [];
-    gsap.utils.toArray(".cijfer").forEach(function (el) {
+    gsap.utils.toArray(".figure").forEach(function (el) {
       var tekst = el.textContent.trim();
       if (!/^\d+$/.test(tekst)) return;
       var doel = parseInt(tekst, 10);
@@ -168,7 +168,7 @@
      de rechte randen blijven staan. De uitslag zwelt aan en dooft uit,
      dus de vorm eindigt precies zoals hij in Webflow staat. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    var golven = gsap.utils.toArray(".hero-golf path, .footer-golf path");
+    var golven = gsap.utils.toArray(".hero-wave path, .footer-wave path");
     var tweens = [];
     golven.forEach(function (pad) {
       var origineel = pad.getAttribute("d");
@@ -214,7 +214,7 @@
         ease: "sine.inOut",
         onUpdate: function () { pad.setAttribute("d", buig(staat.t)); },
         onComplete: function () { pad.setAttribute("d", origineel); },
-        scrollTrigger: { trigger: pad.closest(".hero-golf, .footer-golf"), start: "top 95%", once: true }
+        scrollTrigger: { trigger: pad.closest(".hero-wave, .footer-wave"), start: "top 95%", once: true }
       });
       tweens.push([tw, pad, origineel]);
     });
@@ -236,11 +236,11 @@
    --------------------------------------------------------------- */
 (function () {
   document.querySelectorAll(".nav-link").forEach(function (link) {
-    if (link.querySelector(".nav-rol") || link.children.length) return;
+    if (link.querySelector(".nav-roll") || link.children.length) return;
     var tekst = link.textContent.trim();
     if (!tekst) return;
-    link.innerHTML = '<span class="nav-rol"><span class="nav-rol-tekst"></span></span>';
-    link.querySelector(".nav-rol-tekst").textContent = tekst;
+    link.innerHTML = '<span class="nav-roll"><span class="nav-roll-text"></span></span>';
+    link.querySelector(".nav-roll-text").textContent = tekst;
   });
 })();
 
@@ -250,23 +250,23 @@
    tweede pijl die bij hover van links binnenschuift. CSS in lmo.css.
    --------------------------------------------------------------- */
 (function () {
-  document.querySelectorAll(".knop").forEach(function (knop) {
-    var pil = knop.querySelector(".knop-pil");
+  document.querySelectorAll(".button").forEach(function (knop) {
+    var pil = knop.querySelector(".button-pill");
     if (pil && pil.children.length === 0 && pil.textContent.trim()) {
       var rol = document.createElement("span");
-      rol.className = "knop-rol";
+      rol.className = "button-roll";
       var tekst = document.createElement("span");
-      tekst.className = "knop-rol-tekst";
+      tekst.className = "button-roll-text";
       tekst.textContent = pil.textContent.trim();
       rol.appendChild(tekst);
       pil.textContent = "";
       pil.appendChild(rol);
     }
 
-    var pijl = knop.querySelector(".knop-pijl svg");
-    if (pijl && !knop.querySelector(".knop-pijl-in")) {
+    var pijl = knop.querySelector(".button-arrow svg");
+    if (pijl && !knop.querySelector(".button-arrow-in")) {
       var kopie = pijl.cloneNode(true);
-      kopie.classList.add("knop-pijl-in");
+      kopie.classList.add("button-arrow-in");
       pijl.parentNode.appendChild(kopie);
     }
   });
@@ -281,9 +281,9 @@
    --------------------------------------------------------------- */
 (function () {
   var NS = "http://www.w3.org/2000/svg";
-  document.querySelectorAll(".praktijkkaart .download svg").forEach(function (svg, i) {
+  document.querySelectorAll(".practice-card .download svg").forEach(function (svg, i) {
     var paden = svg.querySelectorAll("path");
-    if (paden.length !== 2 || svg.querySelector(".download-pijlen")) return;
+    if (paden.length !== 2 || svg.querySelector(".download-arrows")) return;
     var pijl = paden[1];
     var id = "lmo-dl-clip-" + i;
 
@@ -299,7 +299,7 @@
     var masker = document.createElementNS(NS, "g");
     masker.setAttribute("clip-path", "url(#" + id + ")");
     var groep = document.createElementNS(NS, "g");
-    groep.setAttribute("class", "download-pijlen");
+    groep.setAttribute("class", "download-arrows");
     var kopie = pijl.cloneNode(true);
     kopie.setAttribute("transform", "translate(0 -11.5)");
     groep.appendChild(pijl);
@@ -318,7 +318,7 @@
    komen hier.
    --------------------------------------------------------------- */
 (function () {
-  [[".themalijst", ".themarij"], [".tijdlijn", ".nieuwsitem"]].forEach(function (paar) {
+  [[".theme-list", ".theme-row"], [".timeline", ".news-item"]].forEach(function (paar) {
     document.querySelectorAll(paar[0]).forEach(function (lijst) {
       lijst.setAttribute("data-directional-hover", "");
       lijst.setAttribute("data-type", "y");
@@ -326,7 +326,7 @@
         rij.setAttribute("data-directional-hover-item", "");
         if (!rij.querySelector("[data-directional-hover-tile]")) {
           var tegel = document.createElement("div");
-          tegel.className = "lmo-tegel";
+          tegel.className = "lmo-tile";
           tegel.setAttribute("data-directional-hover-tile", "");
           rij.insertBefore(tegel, rij.firstChild);
         }
@@ -341,11 +341,11 @@
    van rechts naar links (Figma: Tekstlink › Hover).
    --------------------------------------------------------------- */
 (function () {
-  document.querySelectorAll(".tekstlink").forEach(function (link) {
-    var pijl = link.querySelector(".tekstlink-pijl");
-    if (!pijl || link.querySelector(".tekstlink-pijl.is-voor")) return;
+  document.querySelectorAll(".text-link").forEach(function (link) {
+    var pijl = link.querySelector(".text-link-arrow");
+    if (!pijl || link.querySelector(".text-link-arrow.is-before")) return;
     var voor = pijl.cloneNode(true);
-    voor.classList.add("is-voor");
+    voor.classList.add("is-before");
     voor.setAttribute("aria-hidden", "true");
     link.insertBefore(voor, link.firstChild);
   });
@@ -426,9 +426,9 @@ if (document.readyState === 'loading') {
    versie uit Webflow staan.
    --------------------------------------------------------------- */
 (function () {
-  var blok = document.querySelector(".gemeenten-blok");
+  var blok = document.querySelector(".municipalities-block");
   if (!blok) return;
-  var bron = [].slice.call(blok.querySelectorAll(".gemeenten-data [data-gemeente]"));
+  var bron = [].slice.call(blok.querySelectorAll(".municipalities-data [data-gemeente]"));
   if (!bron.length) return;
 
   var getal = function (v) { var n = parseFloat(v); return isNaN(n) ? null : n; };
@@ -454,18 +454,18 @@ if (document.readyState === 'loading') {
   var overig = gemeenten.length - opKaart.length;
   if (!opKaart.length) return;
 
-  var kaart = blok.querySelector(".kaart");
+  var kaart = blok.querySelector(".map");
   var chips = blok.querySelector(".chips");
   var popup = blok.querySelector(".popup");
   var punten = {}, chipEls = {};
 
   // kaartpunten
   if (kaart) {
-    kaart.querySelectorAll(".kaartpunt").forEach(function (p) { p.remove(); });
+    kaart.querySelectorAll(".map-point").forEach(function (p) { p.remove(); });
     opKaart.forEach(function (g) {
       var p = document.createElement("button");
       p.type = "button";
-      p.className = "kaartpunt";
+      p.className = "map-point";
       p.style.left = g.x + "%";
       p.style.top = g.y + "%";
       p.setAttribute("aria-label", g.naam);
@@ -484,7 +484,7 @@ if (document.readyState === 'loading') {
       c.type = "button";
       c.className = "chip";
       c.setAttribute("aria-pressed", "false");
-      c.innerHTML = '<span class="chip-punt"></span>';
+      c.innerHTML = '<span class="chip-dot"></span>';
       c.appendChild(document.createTextNode(g.naam));
       c.addEventListener("click", function () { kies(g, true); toonKaartje(); });
       chips.appendChild(c);
@@ -494,7 +494,7 @@ if (document.readyState === 'loading') {
       var meer = document.createElement("a");
       meer.className = "chip";
       meer.href = "#";
-      meer.innerHTML = '<span class="chip-punt is-hol"></span>';
+      meer.innerHTML = '<span class="chip-dot is-hollow"></span>';
       meer.appendChild(document.createTextNode("+ " + overig + (overig === 1 ? " gemeente" : " gemeenten")));
       chips.appendChild(meer);
     }
@@ -516,37 +516,37 @@ if (document.readyState === 'loading') {
   function kies(g, animeer) {
     Object.keys(punten).forEach(function (s) {
       var aan = s === g.slug;
-      punten[s].classList.toggle("is-actief", aan);
+      punten[s].classList.toggle("is-active", aan);
       punten[s].setAttribute("aria-pressed", String(aan));
     });
     Object.keys(chipEls).forEach(function (s) {
       var aan = s === g.slug;
-      chipEls[s].classList.toggle("is-actief", aan);
+      chipEls[s].classList.toggle("is-active", aan);
       chipEls[s].setAttribute("aria-pressed", String(aan));
-      var punt = chipEls[s].querySelector(".chip-punt");
-      if (punt) punt.classList.toggle("is-actief", aan);
+      var punt = chipEls[s].querySelector(".chip-dot");
+      if (punt) punt.classList.toggle("is-active", aan);
     });
     if (!popup) return;
 
     var vul = function () {
-      zet(".popup-titel .h3", g.naam);
-      var getallen = popup.querySelectorAll(".opvang-getal");
+      zet(".popup-title .h3", g.naam);
+      var getallen = popup.querySelectorAll(".shelter-number");
       [g.azc, g.gemeentelijk, g.amv].forEach(function (n, i) { if (getallen[i]) getallen[i].textContent = n; });
-      var citaat = popup.querySelector(".popup-citaat");
+      var citaat = popup.querySelector(".popup-quote");
       if (citaat) {
         citaat.textContent = g.uitdaging ? "“" + g.uitdaging + "”" : "";
-        citaat.closest(".popup-blok").hidden = !g.uitdaging;
+        citaat.closest(".popup-block").hidden = !g.uitdaging;
       }
-      var tag = popup.querySelector(".popup-blok .tag");
+      var tag = popup.querySelector(".popup-block .tag");
       if (tag) {
         tag.textContent = g.goedIn;
         tag.href = "/zoeken?q=" + encodeURIComponent(g.goedIn);
-        tag.closest(".popup-blok").hidden = !g.goedIn;
+        tag.closest(".popup-block").hidden = !g.goedIn;
       }
-      var knop = popup.querySelector(".knop");
+      var knop = popup.querySelector(".button");
       if (knop) {
         knop.href = "/gemeenten/" + g.slug;
-        var t = knop.querySelector(".knop-rol-tekst") || knop.querySelector(".knop-pil");
+        var t = knop.querySelector(".button-roll-text") || knop.querySelector(".button-pill");
         if (t) t.textContent = "Naar " + g.naam;
       }
     };
@@ -580,7 +580,7 @@ if (document.readyState === 'loading') {
    werkt hier vanzelf door.
    --------------------------------------------------------------- */
 (function () {
-  var knop = document.querySelector(".nav .menuknop");
+  var knop = document.querySelector(".nav .menu-button");
   var links = [].slice.call(document.querySelectorAll(".nav .nav-menu a"));
   if (!knop || !links.length) return;
 
@@ -599,31 +599,31 @@ if (document.readyState === 'loading') {
   paneel.setAttribute("aria-modal", "true");
   paneel.setAttribute("aria-label", "Menu");
   paneel.innerHTML =
-    '<div class="lmo-menu-binnen">' +
-      '<form class="zoek-balk lmo-menu-zoek" role="search" action="/zoeken">' +
+    '<div class="lmo-menu-inner">' +
+      '<form class="search-bar lmo-menu-search" role="search" action="/zoeken">' +
         '<label class="lmo-sr" for="lmo-menu-zoek">Zoek in het leernetwerk</label>' +
-        '<div class="zoekveld">' + ZOEK + '<input id="lmo-menu-zoek" class="zoekinvoer" type="search" name="q" autocomplete="off" placeholder="Zoek in het leernetwerk"></div>' +
-        '<button type="submit" class="zoekknop-formulier lmo-formknop" aria-label="Zoeken"><span class="knop-rol"><span class="knop-rol-tekst">Zoeken</span></span><span class="lmo-formknop-icoon">' + ZOEK + "</span></button>" +
+        '<div class="search-field">' + ZOEK + '<input id="lmo-menu-zoek" class="search-input" type="search" name="q" autocomplete="off" placeholder="Zoek in het leernetwerk"></div>' +
+        '<button type="submit" class="search-submit lmo-form-button" aria-label="Zoeken"><span class="button-roll"><span class="button-roll-text">Zoeken</span></span><span class="lmo-form-button-icon">' + ZOEK + "</span></button>" +
       "</form>" +
-      '<ol class="lmo-menu-lijst">' +
+      '<ol class="lmo-menu-list">' +
         links.map(function (a, i) {
           var nr = (i + 1 < 10 ? "0" : "") + (i + 1);
           return '<li><a class="lmo-menu-link" href="' + esc(a.getAttribute("href") || "#") + '">' +
-            '<span class="lmo-menu-nr" aria-hidden="true">' + nr + "</span>" +
-            '<span class="lmo-menu-tekst">' + esc(a.textContent.trim()) + "</span>" +
-            '<span class="lmo-menu-pijl">' + PIJL + "</span></a></li>";
+            '<span class="lmo-menu-number" aria-hidden="true">' + nr + "</span>" +
+            '<span class="lmo-menu-text">' + esc(a.textContent.trim()) + "</span>" +
+            '<span class="lmo-menu-arrow">' + PIJL + "</span></a></li>";
         }).join("") +
       "</ol>" +
-      '<div class="lmo-menu-acties">' +
-        '<a href="/#nieuwsbrief" class="knop lmo-menu-knop" data-menu-sluit>' +
-          '<span class="knop-pil is-koraal"><span class="knop-rol"><span class="knop-rol-tekst">Schrijf je in voor de nieuwsbrief</span></span></span>' +
-          '<span class="knop-pijl is-koraal">' + PIJL + PIJL.replace("<svg ", '<svg class="knop-pijl-in" ') + "</span></a>" +
+      '<div class="lmo-menu-actions">' +
+        '<a href="/#nieuwsbrief" class="button lmo-menu-button" data-menu-sluit>' +
+          '<span class="button-pill is-coral"><span class="button-roll"><span class="button-roll-text">Schrijf je in voor de nieuwsbrief</span></span></span>' +
+          '<span class="button-arrow is-coral">' + PIJL + PIJL.replace("<svg ", '<svg class="button-arrow-in" ') + "</span></a>" +
       "</div>" +
     "</div>";
   if (mail) {
     var m = mail.cloneNode(true);
     m.classList.add("lmo-menu-mail");
-    paneel.querySelector(".lmo-menu-acties").appendChild(m);
+    paneel.querySelector(".lmo-menu-actions").appendChild(m);
   }
   document.body.appendChild(paneel);
 
@@ -637,7 +637,7 @@ if (document.readyState === 'loading') {
   knop.setAttribute("aria-expanded", "false");
 
   function zetKnop(dicht) {
-    var rol = knop.querySelector(".knop-rol-tekst");
+    var rol = knop.querySelector(".button-roll-text");
     if (rol) rol.textContent = dicht ? tekst : "Sluiten";
     else knop.textContent = dicht ? tekst : "Sluiten";
   }
@@ -664,7 +664,7 @@ if (document.readyState === 'loading') {
     if (gsap && !stil.matches) {
       gsap.killTweensOf(paneel);
       gsap.fromTo(paneel, { clipPath: knopVorm() }, { clipPath: VOL, duration: 0.7, ease: "power3.inOut", clearProps: "clipPath" });
-      gsap.fromTo(paneel.querySelectorAll(".lmo-menu-zoek, .lmo-menu-lijst li, .lmo-menu-acties > *"),
+      gsap.fromTo(paneel.querySelectorAll(".lmo-menu-search, .lmo-menu-list li, .lmo-menu-actions > *"),
         { autoAlpha: 0, y: "1rem" },
         { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035, delay: 0.35, clearProps: "transform,opacity,visibility" });
     }
@@ -680,13 +680,13 @@ if (document.readyState === 'loading') {
     var klaar = function () { if (!open) paneel.hidden = true; };
     if (gsap && !stil.matches) {
       gsap.killTweensOf(paneel);
-      gsap.to(paneel.querySelectorAll(".lmo-menu-binnen > *"), { autoAlpha: 0, duration: 0.15, ease: "power1.in" });
+      gsap.to(paneel.querySelectorAll(".lmo-menu-inner > *"), { autoAlpha: 0, duration: 0.15, ease: "power1.in" });
       gsap.fromTo(paneel, { clipPath: VOL }, {
         clipPath: knopVorm(), duration: 0.55, ease: "power3.inOut", delay: 0.05,
         onComplete: function () {
           klaar();
           gsap.set(paneel, { clearProps: "clipPath" });
-          gsap.set(paneel.querySelectorAll(".lmo-menu-binnen > *"), { clearProps: "opacity,visibility" });
+          gsap.set(paneel.querySelectorAll(".lmo-menu-inner > *"), { clearProps: "opacity,visibility" });
         }
       });
       setTimeout(klaar, 800);

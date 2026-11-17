@@ -166,9 +166,9 @@
   function suggestieHTML(s, q) {
     var v = vouw(s), qv = vouw(q.trim());
     if (qv && v.indexOf(qv) === 0) {
-      return '<span class="zoek-sugg-getypt">' + esc(s.slice(0, qv.length)) + "</span>" + esc(s.slice(qv.length));
+      return '<span class="search-suggestion-typed">' + esc(s.slice(0, qv.length)) + "</span>" + esc(s.slice(qv.length));
     }
-    return markeer(s, termen(q), "zoek-sugg-getypt");
+    return markeer(s, termen(q), "search-suggestion-typed");
   }
 
   function metaTekst(item, metDatum) {
@@ -189,9 +189,9 @@
   function zoekUrl(q) { return ZOEKPAGINA + "?q=" + encodeURIComponent(q); }
 
   function knopHTML(tekst, href, extraKlasse) {
-    return '<a href="' + esc(href) + '" class="knop ' + (extraKlasse || "") + '">' +
-      '<span class="knop-pil"><span class="knop-rol"><span class="knop-rol-tekst">' + esc(tekst) + "</span></span></span>" +
-      '<span class="knop-pijl">' + SVG_PIJL + SVG_PIJL.replace("<svg ", '<svg class="knop-pijl-in" ') + "</span></a>";
+    return '<a href="' + esc(href) + '" class="button ' + (extraKlasse || "") + '">' +
+      '<span class="button-pill"><span class="button-roll"><span class="button-roll-text">' + esc(tekst) + "</span></span></span>" +
+      '<span class="button-arrow">' + SVG_PIJL + SVG_PIJL.replace("<svg ", '<svg class="button-arrow-in" ') + "</span></a>";
   }
 
   var bewegingUit = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -205,56 +205,56 @@
 
   function bouwOverlay() {
     overlay = document.createElement("div");
-    overlay.className = "zoek-overlay";
+    overlay.className = "search-overlay";
     overlay.id = "lmo-zoek";
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", "Zoeken in het leernetwerk");
     overlay.hidden = true;
     overlay.innerHTML =
-      '<div class="zoek-scrim" data-zoek-sluit></div>' +
-      '<div class="zoek-paneel">' +
-        '<div class="zoek-binnen">' +
-          '<div class="kicker zoek-kicker"><span class="kicker-stip"></span><span class="kicker-tekst">Zoeken in het leernetwerk</span></div>' +
-          '<form class="zoek-balk" role="search" action="' + ZOEKPAGINA + '">' +
+      '<div class="search-scrim" data-zoek-sluit></div>' +
+      '<div class="search-panel">' +
+        '<div class="search-inner">' +
+          '<div class="kicker search-kicker"><span class="kicker-dot"></span><span class="kicker-text">Zoeken in het leernetwerk</span></div>' +
+          '<form class="search-bar" role="search" action="' + ZOEKPAGINA + '">' +
             '<label class="lmo-sr" for="lmo-zoek-invoer">Zoek in het leernetwerk</label>' +
-            '<div class="zoekveld zoek-veld">' + SVG_ZOEK +
-              '<input id="lmo-zoek-invoer" class="zoekinvoer" type="search" name="q" autocomplete="off" spellcheck="false"' +
+            '<div class="search-field search-field-overlay">' + SVG_ZOEK +
+              '<input id="lmo-zoek-invoer" class="search-input" type="search" name="q" autocomplete="off" spellcheck="false"' +
               ' placeholder="Zoek op onderwerp, gemeente of document" role="combobox" aria-autocomplete="list"' +
               ' aria-expanded="false" aria-controls="lmo-zoek-lijst">' +
             "</div>" +
-            '<button type="submit" class="zoekknop-formulier lmo-formknop" aria-label="Zoeken">' +
-              '<span class="knop-rol"><span class="knop-rol-tekst">Zoeken</span></span>' +
-              '<span class="lmo-formknop-icoon">' + SVG_ZOEK + "</span>" +
+            '<button type="submit" class="search-submit lmo-form-button" aria-label="Zoeken">' +
+              '<span class="button-roll"><span class="button-roll-text">Zoeken</span></span>' +
+              '<span class="lmo-form-button-icon">' + SVG_ZOEK + "</span>" +
             "</button>" +
           "</form>" +
-          '<div class="zoek-toetsen" aria-hidden="true">' +
-            '<span class="zoek-toets-groep"><kbd class="zoek-toets">Enter</kbd>zoeken</span>' +
-            '<span class="zoek-toets-groep"><kbd class="zoek-toets">↑ ↓</kbd>kiezen</span>' +
-            '<span class="zoek-toets-groep"><kbd class="zoek-toets">Esc</kbd>sluiten</span>' +
+          '<div class="search-keys" aria-hidden="true">' +
+            '<span class="search-key-group"><kbd class="search-key">Enter</kbd>zoeken</span>' +
+            '<span class="search-key-group"><kbd class="search-key">↑ ↓</kbd>kiezen</span>' +
+            '<span class="search-key-group"><kbd class="search-key">Esc</kbd>sluiten</span>' +
           "</div>" +
-          '<div class="zoek-kolommen" id="lmo-zoek-lijst" role="listbox" aria-label="Suggesties en resultaten"></div>' +
-          '<p class="zoek-leeg" role="status" aria-live="polite"></p>' +
-          '<div class="zoek-onderrij">' +
-            '<div class="zoek-veelgezocht"><span class="zoek-veel-label">Veel gezocht</span><span class="zoek-tags"></span></div>' +
-            '<div class="zoek-alle"></div>' +
+          '<div class="search-columns" id="lmo-zoek-lijst" role="listbox" aria-label="Suggesties en resultaten"></div>' +
+          '<p class="search-empty" role="status" aria-live="polite"></p>' +
+          '<div class="search-footer">' +
+            '<div class="search-popular"><span class="search-popular-label">Veel gezocht</span><span class="search-tags"></span></div>' +
+            '<div class="search-all"></div>' +
           "</div>" +
         "</div>" +
       "</div>";
     document.body.appendChild(overlay);
 
-    paneel = overlay.querySelector(".zoek-paneel");
+    paneel = overlay.querySelector(".search-panel");
     invoer = overlay.querySelector("#lmo-zoek-invoer");
-    kolommen = overlay.querySelector(".zoek-kolommen");
-    leegMelding = overlay.querySelector(".zoek-leeg");
-    onderKnop = overlay.querySelector(".zoek-alle");
-    toetsen = overlay.querySelector(".zoek-toetsen");
-    veelBlok = overlay.querySelector(".zoek-veelgezocht");
+    kolommen = overlay.querySelector(".search-columns");
+    leegMelding = overlay.querySelector(".search-empty");
+    onderKnop = overlay.querySelector(".search-all");
+    toetsen = overlay.querySelector(".search-keys");
+    veelBlok = overlay.querySelector(".search-popular");
 
     overlay.addEventListener("click", function (e) {
       if (e.target.closest("[data-zoek-sluit]")) sluit();
     });
-    overlay.querySelector(".zoek-balk").addEventListener("submit", function (e) {
+    overlay.querySelector(".search-bar").addEventListener("submit", function (e) {
       e.preventDefault();
       kies();
     });
@@ -287,27 +287,27 @@
     var html = "";
 
     if (sugg.length) {
-      html += '<div class="zoek-kolom is-suggesties" role="group" aria-labelledby="lmo-zoek-kop-sugg">' +
-        '<p class="zoek-kolomkop" id="lmo-zoek-kop-sugg">Suggesties</p><div class="zoek-sugglijst">' +
+      html += '<div class="search-column is-suggestions" role="group" aria-labelledby="lmo-zoek-kop-sugg">' +
+        '<p class="search-column-heading" id="lmo-zoek-kop-sugg">Suggesties</p><div class="search-suggestion-list">' +
         sugg.map(function (s, i) {
-          return '<a class="zoek-sugg" role="option" id="lmo-zoek-s' + i + '" href="' + esc(zoekUrl(s)) + '">' +
-            '<span class="zoek-sugg-icoon">' + SVG_ZOEK_KLEIN + "</span>" +
-            '<span class="zoek-sugg-tekst">' + suggestieHTML(s, q) + "</span>" +
-            '<span class="zoek-pijlvak">' + SVG_PIJL_KLEIN + "</span></a>";
+          return '<a class="search-suggestion" role="option" id="lmo-zoek-s' + i + '" href="' + esc(zoekUrl(s)) + '">' +
+            '<span class="search-suggestion-icon">' + SVG_ZOEK_KLEIN + "</span>" +
+            '<span class="search-suggestion-text">' + suggestieHTML(s, q) + "</span>" +
+            '<span class="search-arrow-box">' + SVG_PIJL_KLEIN + "</span></a>";
         }).join("") + "</div></div>";
     }
     if (direct.length) {
-      html += '<div class="zoek-kolom is-direct" role="group" aria-labelledby="lmo-zoek-kop-direct">' +
-        '<p class="zoek-kolomkop" id="lmo-zoek-kop-direct">Direct naar</p><div class="zoek-directlijst">' +
+      html += '<div class="search-column is-direct" role="group" aria-labelledby="lmo-zoek-kop-direct">' +
+        '<p class="search-column-heading" id="lmo-zoek-kop-direct">Direct naar</p><div class="search-direct-list">' +
         direct.map(function (item, i) {
           var soort = SOORTEN[item.soort] || SOORTEN.nieuws;
           var meta = metaTekst(item, false);
-          return '<a class="zoek-direct" role="option" id="lmo-zoek-d' + i + '" href="' + esc(item.url || "#") + '">' +
-            '<span class="zoek-icoonvak">' + icoon(soort.icoon, "1.5rem") + "</span>" +
-            '<span class="zoek-direct-tekst"><span class="zoek-label">' + esc(soort.naam) +
-              (meta ? '<span class="zoek-scheiding" aria-hidden="true"></span><span class="zoek-label-meta">' + esc(meta) + "</span>" : "") +
-            '</span><span class="zoek-direct-titel">' + markeer(item.titel, ts, "zoek-markeer") + "</span></span>" +
-            '<span class="zoek-pijlvak">' + SVG_PIJL_KLEIN + "</span></a>";
+          return '<a class="search-direct" role="option" id="lmo-zoek-d' + i + '" href="' + esc(item.url || "#") + '">' +
+            '<span class="search-icon-box">' + icoon(soort.icoon, "1.5rem") + "</span>" +
+            '<span class="search-direct-text"><span class="search-label">' + esc(soort.naam) +
+              (meta ? '<span class="search-separator" aria-hidden="true"></span><span class="search-label-meta">' + esc(meta) + "</span>" : "") +
+            '</span><span class="search-direct-title">' + markeer(item.titel, ts, "search-highlight") + "</span></span>" +
+            '<span class="search-arrow-box">' + SVG_PIJL_KLEIN + "</span></a>";
         }).join("") + "</div></div>";
     }
     kolommen.innerHTML = html;
@@ -326,9 +326,9 @@
 
     toetsen.hidden = !heeft;
     onderKnop.innerHTML = res.length
-      ? knopHTML("Alle " + res.length + " resultaten voor “" + q.trim() + "”", zoekUrl(q.trim()), "zoek-alle-knop")
+      ? knopHTML("Alle " + res.length + " resultaten voor “" + q.trim() + "”", zoekUrl(q.trim()), "search-all-button")
       : "";
-    var kort = onderKnop.querySelector(".knop-rol-tekst");
+    var kort = onderKnop.querySelector(".button-roll-text");
     if (kort) kort.setAttribute("data-kort", "Alle " + res.length + " resultaten");
   }
 
@@ -336,10 +336,10 @@
     if (!opties.length) return;
     if (i < 0) i = opties.length - 1;
     if (i >= opties.length) i = 0;
-    opties.forEach(function (o) { o.classList.remove("is-actief"); o.setAttribute("aria-selected", "false"); });
+    opties.forEach(function (o) { o.classList.remove("is-active"); o.setAttribute("aria-selected", "false"); });
     actief = i;
     var o = opties[i];
-    o.classList.add("is-actief");
+    o.classList.add("is-active");
     o.setAttribute("aria-selected", "true");
     invoer.setAttribute("aria-activedescendant", o.id);
     if (!stil) o.scrollIntoView({ block: "nearest" });
@@ -354,7 +354,7 @@
   }
 
   function vulVeelGezocht() {
-    var tags = overlay.querySelector(".zoek-tags");
+    var tags = overlay.querySelector(".search-tags");
     tags.innerHTML = (indexData.veelGezocht || []).map(function (t) {
       return '<a class="tag" href="' + esc(zoekUrl(t)) + '">' + esc(t) + "</a>";
     }).join("");
@@ -387,7 +387,7 @@
       teken();
     });
     overlay.hidden = false;
-    document.documentElement.classList.add("lmo-zoek-open");
+    document.documentElement.classList.add("lmo-search-open");
     if (trigger) {
       trigger.setAttribute("aria-expanded", "true");
       trigger.setAttribute("aria-label", "Zoeken sluiten");
@@ -396,10 +396,10 @@
 
     var gsap = window.gsap;
     if (gsap && !bewegingUit.matches) {
-      gsap.killTweensOf([overlay.querySelector(".zoek-scrim"), paneel]);
-      gsap.fromTo(overlay.querySelector(".zoek-scrim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power1.out" });
+      gsap.killTweensOf([overlay.querySelector(".search-scrim"), paneel]);
+      gsap.fromTo(overlay.querySelector(".search-scrim"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power1.out" });
       gsap.fromTo(paneel, { yPercent: -100 }, { yPercent: 0, duration: 0.6, ease: "expo.out" });
-      gsap.fromTo(overlay.querySelectorAll(".zoek-binnen > *"), { autoAlpha: 0, y: "1rem" },
+      gsap.fromTo(overlay.querySelectorAll(".search-inner > *"), { autoAlpha: 0, y: "1rem" },
         { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.04, delay: 0.15, clearProps: "transform,opacity,visibility" });
     }
     setTimeout(function () { invoer.focus(); invoer.select(); }, 30);
@@ -408,7 +408,7 @@
   function sluit() {
     if (!open) return;
     open = false;
-    document.documentElement.classList.remove("lmo-zoek-open");
+    document.documentElement.classList.remove("lmo-search-open");
     if (trigger) {
       trigger.setAttribute("aria-expanded", "false");
       trigger.setAttribute("aria-label", "Zoeken");
@@ -417,7 +417,7 @@
     var klaar = function () { if (!open) overlay.hidden = true; };
     var gsap = window.gsap;
     if (gsap && !bewegingUit.matches) {
-      gsap.to(overlay.querySelector(".zoek-scrim"), { autoAlpha: 0, duration: 0.25 });
+      gsap.to(overlay.querySelector(".search-scrim"), { autoAlpha: 0, duration: 0.25 });
       gsap.to(paneel, { yPercent: -100, duration: 0.4, ease: "power3.in", onComplete: klaar });
       setTimeout(klaar, 500);  // ook als de animatie niet afloopt (bijv. tab op de achtergrond)
     } else klaar();
@@ -435,17 +435,17 @@
       }
     });
 
-    trigger = document.querySelector(".nav .zoekknop");
+    trigger = document.querySelector(".nav .search-button");
     if (trigger) {
       trigger.setAttribute("href", ZOEKPAGINA);
       trigger.setAttribute("role", "button");
       trigger.setAttribute("aria-haspopup", "dialog");
       trigger.setAttribute("aria-controls", "lmo-zoek");
       trigger.setAttribute("aria-expanded", "false");
-      if (!trigger.querySelector(".zoekknop-sluit")) {
+      if (!trigger.querySelector(".search-button-close")) {
         var sluitIcoon = document.createElement("span");
-        sluitIcoon.className = "zoekknop-sluit";
-        sluitIcoon.innerHTML = SVG_SLUIT + '<span class="zoekknop-sluit-tekst">Sluiten</span>';
+        sluitIcoon.className = "search-button-close";
+        sluitIcoon.innerHTML = SVG_SLUIT + '<span class="search-button-close-text">Sluiten</span>';
         trigger.appendChild(sluitIcoon);
       }
       trigger.addEventListener("click", function (e) {
@@ -472,7 +472,7 @@
      ================================================================= */
 
   function initKoppelingen() {
-    document.querySelectorAll(".hero-zoeken form").forEach(function (form) {
+    document.querySelectorAll(".hero-search form").forEach(function (form) {
       var veld = form.querySelector("input[type=search], input[type=text]");
       var knop = form.querySelector("[type=submit]");
       if (knop) {
@@ -494,7 +494,7 @@
       if (knop) knop.addEventListener("click", stuur, true);
     });
 
-    document.querySelectorAll(".veelgezocht .tag").forEach(function (tag) {
+    document.querySelectorAll(".popular-searches .tag").forEach(function (tag) {
       if (!tag.getAttribute("href") || tag.getAttribute("href") === "#") tag.setAttribute("href", zoekUrl(tag.textContent.trim()));
     });
     document.querySelectorAll("a").forEach(function (a) {
@@ -514,37 +514,37 @@
     var staat = leesUrl();
 
     doel.innerHTML =
-      '<form class="zoek-balk zoekpagina-balk" role="search" action="' + ZOEKPAGINA + '">' +
+      '<form class="search-bar search-page-bar" role="search" action="' + ZOEKPAGINA + '">' +
         '<label class="lmo-sr" for="lmo-zoekpagina-invoer">Zoek in het leernetwerk</label>' +
-        '<div class="zoekveld">' + SVG_ZOEK +
-          '<input id="lmo-zoekpagina-invoer" class="zoekinvoer" type="search" name="q" autocomplete="off"' +
+        '<div class="search-field">' + SVG_ZOEK +
+          '<input id="lmo-zoekpagina-invoer" class="search-input" type="search" name="q" autocomplete="off"' +
           ' placeholder="Zoek op onderwerp, gemeente of document">' +
         "</div>" +
-        '<button type="submit" class="zoekknop-formulier lmo-formknop" aria-label="Zoeken">' +
-          '<span class="knop-rol"><span class="knop-rol-tekst">Zoeken</span></span>' +
-          '<span class="lmo-formknop-icoon">' + SVG_ZOEK + "</span>" +
+        '<button type="submit" class="search-submit lmo-form-button" aria-label="Zoeken">' +
+          '<span class="button-roll"><span class="button-roll-text">Zoeken</span></span>' +
+          '<span class="lmo-form-button-icon">' + SVG_ZOEK + "</span>" +
         "</button>" +
       "</form>" +
-      '<div class="zoekpagina-lijst">' +
-        '<div class="zoekpagina-filters">' +
-          '<div class="zoek-filters" role="group" aria-label="Filter op soort"></div>' +
-          '<label class="zoek-sorteer"><span>Sorteer op</span>' +
-            '<span class="zoek-sorteer-veld"><select><option value="relevantie">Relevantie</option><option value="nieuwste">Nieuwste eerst</option></select>' + SVG_CHEVRON + "</span>" +
+      '<div class="search-page-list">' +
+        '<div class="search-page-filters">' +
+          '<div class="search-filters" role="group" aria-label="Filter op soort"></div>' +
+          '<label class="search-sort"><span>Sorteer op</span>' +
+            '<span class="search-sort-field"><select><option value="relevantie">Relevantie</option><option value="nieuwste">Nieuwste eerst</option></select>' + SVG_CHEVRON + "</span>" +
           "</label>" +
         "</div>" +
         '<p class="lmo-sr" role="status" aria-live="polite" data-zoek-status></p>' +
-        '<ol class="zoek-resultaten"></ol>' +
-        '<div class="zoek-leegpagina" hidden></div>' +
-        '<nav class="zoek-paginering" aria-label="Paginering"></nav>' +
+        '<ol class="search-results"></ol>' +
+        '<div class="search-empty-page" hidden></div>' +
+        '<nav class="search-pagination" aria-label="Paginering"></nav>' +
       "</div>";
 
     var form = doel.querySelector("form");
     var veld = doel.querySelector("input");
-    var filters = doel.querySelector(".zoek-filters");
+    var filters = doel.querySelector(".search-filters");
     var sorteer = doel.querySelector("select");
-    var lijstEl = doel.querySelector(".zoek-resultaten");
-    var leeg = doel.querySelector(".zoek-leegpagina");
-    var pag = doel.querySelector(".zoek-paginering");
+    var lijstEl = doel.querySelector(".search-results");
+    var leeg = doel.querySelector(".search-empty-page");
+    var pag = doel.querySelector(".search-pagination");
     var status = doel.querySelector("[data-zoek-status]");
 
     veld.value = staat.q;
@@ -579,7 +579,7 @@
       staat.pagina = parseInt(b.dataset.pagina, 10);
       schrijfUrl(true);
       render();
-      var top = doel.querySelector(".zoekpagina-lijst");
+      var top = doel.querySelector(".search-page-list");
       if (window.lmoLenis) window.lmoLenis.scrollTo(top, { offset: -120 });
       else top.scrollIntoView({ behavior: bewegingUit.matches ? "auto" : "smooth" });
     });
@@ -642,54 +642,54 @@
         .map(function (s) { return [s, SOORTEN[s].meervoud, tellingen[s]]; }));
       filters.innerHTML = alle.length ? knoppen.map(function (k) {
         var aan = staat.soort === k[0];
-        return '<button type="button" class="zoek-filter' + (aan ? " is-actief" : "") + '" data-soort="' + k[0] + '" aria-pressed="' + aan + '">' +
-          '<span class="zoek-filter-label">' + esc(k[1]) + '</span><span class="zoek-filter-aantal">' + k[2] + "</span></button>";
+        return '<button type="button" class="search-filter' + (aan ? " is-active" : "") + '" data-soort="' + k[0] + '" aria-pressed="' + aan + '">' +
+          '<span class="search-filter-label">' + esc(k[1]) + '</span><span class="search-filter-count">' + k[2] + "</span></button>";
       }).join("") : "";
-      doel.querySelector(".zoekpagina-filters").hidden = !alle.length;
+      doel.querySelector(".search-page-filters").hidden = !alle.length;
 
       // resultaten
       lijstEl.innerHTML = deze.map(function (item) {
         var soort = SOORTEN[item.soort] || SOORTEN.nieuws;
         var meta = metaTekst(item, true);
-        return '<li class="zoek-resultaat' + (item.beeld ? " heeft-beeld" : "") + '">' +
-          '<a class="zoek-resultaat-link" href="' + esc(item.url || "#") + '">' +
-            '<span class="lmo-tegel" data-directional-hover-tile></span>' +
-            '<span class="zoek-resultaat-tekst">' +
-              '<span class="zoek-label"><span class="zoek-label-icoon">' + icoon(soort.icoon, "1rem") + "</span>" + esc(soort.naam) +
-                (meta ? '<span class="zoek-scheiding" aria-hidden="true"></span><span class="zoek-label-meta">' + esc(meta) + "</span>" : "") +
+        return '<li class="search-result' + (item.beeld ? " has-image" : "") + '">' +
+          '<a class="search-result-link" href="' + esc(item.url || "#") + '">' +
+            '<span class="lmo-tile" data-directional-hover-tile></span>' +
+            '<span class="search-result-text">' +
+              '<span class="search-label"><span class="search-label-icon">' + icoon(soort.icoon, "1rem") + "</span>" + esc(soort.naam) +
+                (meta ? '<span class="search-separator" aria-hidden="true"></span><span class="search-label-meta">' + esc(meta) + "</span>" : "") +
               "</span>" +
-              '<span class="zoek-resultaat-titel">' + markeer(item.titel, ts, "zoek-markeer") + "</span>" +
-              '<span class="zoek-resultaat-samenvatting">' + markeer(item.samenvatting || "", ts, "zoek-vet") + "</span>" +
+              '<span class="search-result-title">' + markeer(item.titel, ts, "search-highlight") + "</span>" +
+              '<span class="search-result-summary">' + markeer(item.samenvatting || "", ts, "search-bold") + "</span>" +
             "</span>" +
-            (item.beeld ? '<img class="zoek-resultaat-beeld" src="' + esc(item.beeld) + '" alt="" loading="lazy">' : "") +
-            '<span class="zoek-pijlvak">' + SVG_PIJL_KLEIN + "</span>" +
+            (item.beeld ? '<img class="search-result-image" src="' + esc(item.beeld) + '" alt="" loading="lazy">' : "") +
+            '<span class="search-arrow-box">' + SVG_PIJL_KLEIN + "</span>" +
           "</a></li>";
       }).join("");
       lijstEl.hidden = !deze.length;
-      lijstEl.querySelectorAll(".zoek-resultaat-link").forEach(richtingHover);
+      lijstEl.querySelectorAll(".search-result-link").forEach(richtingHover);
 
       // leeg
       if (!staat.q) {
-        leeg.innerHTML = '<p class="zoek-leeg-tekst">Waar ben je naar op zoek? Zoek op onderwerp, gemeente of document.</p>' + veelHTML();
+        leeg.innerHTML = '<p class="search-empty-text">Waar ben je naar op zoek? Zoek op onderwerp, gemeente of document.</p>' + veelHTML();
       } else if (!alle.length) {
-        leeg.innerHTML = '<p class="zoek-leeg-tekst">Niets gevonden voor “' + esc(staat.q) + '”. Controleer de spelling, gebruik minder woorden of kies een van deze onderwerpen.</p>' + veelHTML();
+        leeg.innerHTML = '<p class="search-empty-text">Niets gevonden voor “' + esc(staat.q) + '”. Controleer de spelling, gebruik minder woorden of kies een van deze onderwerpen.</p>' + veelHTML();
       }
       leeg.hidden = alle.length > 0;
 
       // paginering
       if (gefilterd.length > PER_PAGINA) {
-        var html = '<p class="zoek-teller">Resultaat ' + (van + 1) + "–" + (van + deze.length) + " van " + gefilterd.length + "</p><div class=\"zoek-paginas\">";
+        var html = '<p class="search-counter">Resultaat ' + (van + 1) + "–" + (van + deze.length) + " van " + gefilterd.length + "</p><div class=\"zoek-paginas\">";
         for (var p = 1; p <= paginas; p++) {
           html += p === staat.pagina
-            ? '<span class="zoek-pagina is-actief" aria-current="page">' + p + "</span>"
-            : '<a class="zoek-pagina" href="' + paginaUrl(p) + '" data-pagina="' + p + '" aria-label="Pagina ' + p + '">' + p + "</a>";
+            ? '<span class="search-page-link is-active" aria-current="page">' + p + "</span>"
+            : '<a class="search-page-link" href="' + paginaUrl(p) + '" data-pagina="' + p + '" aria-label="Pagina ' + p + '">' + p + "</a>";
         }
         if (staat.pagina < paginas) {
-          html += '<a class="zoek-pagina is-volgende" href="' + paginaUrl(staat.pagina + 1) + '" data-pagina="' + (staat.pagina + 1) + '" aria-label="Volgende pagina">' + SVG_PIJL + "</a>";
+          html += '<a class="search-page-link is-next" href="' + paginaUrl(staat.pagina + 1) + '" data-pagina="' + (staat.pagina + 1) + '" aria-label="Volgende pagina">' + SVG_PIJL + "</a>";
         }
         pag.innerHTML = html + "</div>";
       } else {
-        pag.innerHTML = gefilterd.length ? '<p class="zoek-teller">' + gefilterd.length + (gefilterd.length === 1 ? " resultaat" : " resultaten") + "</p>" : "";
+        pag.innerHTML = gefilterd.length ? '<p class="search-counter">' + gefilterd.length + (gefilterd.length === 1 ? " resultaat" : " resultaten") + "</p>" : "";
       }
 
       status.textContent = staat.q ? kop + (staat.soort ? ", gefilterd op " + SOORTEN[staat.soort].meervoud.toLowerCase() : "") : "";
@@ -703,7 +703,7 @@
 
     function veelHTML() {
       var t = (data.veelGezocht || []);
-      return t.length ? '<div class="zoek-veelgezocht is-pagina"><span class="zoek-veel-label">Veel gezocht</span><span class="zoek-tags">' +
+      return t.length ? '<div class="search-popular is-page"><span class="search-popular-label">Veel gezocht</span><span class="search-tags">' +
         t.map(function (x) { return '<a class="tag" href="' + esc(zoekUrl(x)) + '">' + esc(x) + "</a>"; }).join("") + "</span></div>" : "";
     }
 

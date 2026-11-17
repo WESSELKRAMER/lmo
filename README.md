@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.3/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.9.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,11 +26,15 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.3/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.3/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.9.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.9.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
+
+## Klassen
+
+Alle klassen zijn Engels (Webflow én de klassen die `lmo.js`/`zoeken.js` zelf aanmaken), bijvoorbeeld `button`, `button-pill`, `button-arrow`, `practice-card`, `theme-row`, `news-item`, `map-point`, `key-figure`, met modifiers als `is-coral`, `is-green`, `is-sand`, `is-active`, `is-dark`. Data-attributen (`data-lmo`, `data-gemeente`, …) en teksten blijven Nederlands.
 
 ## Animaties toevoegen
 
@@ -50,13 +54,13 @@ Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zond
 
 | Onderdeel | Effect |
 |---|---|
-| Themalijst (`.themarij`) en nieuws (`.nieuwsitem`) | Directional List Hover van Osmo Supply: een donkerbeige tegel (Zand/200) schuift in vanaf de kant waar de muis binnenkomt |
+| Themalijst (`.theme-row`) en nieuws (`.news-item`) | Directional List Hover van Osmo Supply: een donkerbeige tegel (Zand/200) schuift in vanaf de kant waar de muis binnenkomt |
 | Praktijkkaarten | Zachte schaduw, foto zoomt iets in, download-regel schuift op; de pijl in het download-icoon zakt de bak in en een nieuwe komt van boven |
 | Tekstlinks | Pijl wisselt van rechts naar links |
 | Footerlinks | Koraal onderlijn groeit |
 | Tags, gemeente-chips, zoekveld | Kleurwissels en focusring uit Figma |
-| Kerncijfers (`.kerncijfer`) | De accentbalk links groeit over de hele kaart, tekst wisselt mee (Figma: Kerncijfer › Hover) |
-| Knoppen (`.knop`) | Tekst rolt omhoog, pijl schuift door, vlak wordt lichter; per variant (standaard, `is-koraal`, `is-outline`) |
+| Kerncijfers (`.key-figure`) | De accentbalk links groeit over de hele kaart, tekst wisselt mee (Figma: Kerncijfer › Hover) |
+| Knoppen (`.button`) | Tekst rolt omhoog, pijl schuift door, vlak wordt lichter; per variant (standaard, `is-coral`, `is-outline`) |
 
 De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de tweede pijl zelf toe.
 
@@ -71,7 +75,7 @@ De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de
 
 Collectie **Gemeenten** in Webflow: naam, plekken azc / gemeentelijke opvang / kleinschalige opvang AMV, uitdaging 2027, goed in, kaartpositie (links/boven in %), volgorde, contactadres, website en logo.
 
-Op de homepage staat in het gemeentenblok een verborgen collectielijst (`.gemeenten-data`) met de velden als data-attributen. `lmo.js` bouwt daaruit:
+Op de homepage staat in het gemeentenblok een verborgen collectielijst (`.municipalities-data`) met de velden als data-attributen. `lmo.js` bouwt daaruit:
 - de **kaartpunten** (alleen gemeenten met een kaartpositie),
 - de **chips** eronder, plus "+ N gemeenten" voor de gemeenten zonder kaartpositie,
 - het **kaartje** (naam, drie aantallen, uitdaging, "Hier zijn we goed in", knop naar `/gemeenten/<slug>`).
@@ -100,10 +104,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.9.0
+./release.sh 0.10.0
 ```
 
-Het script pusht, maakt tag `v0.9.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.10.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
