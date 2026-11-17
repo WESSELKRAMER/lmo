@@ -16,7 +16,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.3.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.4.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -24,7 +24,7 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.3.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.4.0/js/lmo.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -43,6 +43,16 @@ Terugkerende onderdelen staan per klasse in `perKlasse` bovenin `js/lmo.js`; daa
 
 Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zonder JavaScript ook.
 
+## Hovers
+
+| Onderdeel | Effect |
+|---|---|
+| Themalijst (`.themarij`) | Directional List Hover van Osmo Supply: een donkergroene tegel schuift in vanaf de kant waar de muis binnenkomt (boven/onder) |
+| Kerncijfers (`.kerncijfer`) | De accentbalk links groeit over de hele kaart, tekst wisselt mee (Figma: Kerncijfer › Hover) |
+| Knoppen (`.knop`) | Tekst rolt omhoog, pijl schuift door, vlak wordt lichter; per variant (standaard, `is-koraal`, `is-outline`) |
+
+De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de tweede pijl zelf toe.
+
 ## Smooth scroll (Lenis)
 
 Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-motion`.
@@ -55,10 +65,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.4.0
+./release.sh 0.5.0
 ```
 
-Het script pusht, maakt tag `v0.4.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.5.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
