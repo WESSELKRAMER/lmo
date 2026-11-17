@@ -486,7 +486,7 @@ if (document.readyState === 'loading') {
       c.setAttribute("aria-pressed", "false");
       c.innerHTML = '<span class="chip-punt"></span>';
       c.appendChild(document.createTextNode(g.naam));
-      c.addEventListener("click", function () { kies(g, true); });
+      c.addEventListener("click", function () { kies(g, true); toonKaartje(); });
       chips.appendChild(c);
       chipEls[g.slug] = c;
     });
@@ -501,6 +501,15 @@ if (document.readyState === 'loading') {
   }
 
   if (popup) popup.setAttribute("aria-live", "polite");
+
+  // Op mobiel staat het kaartje boven de chips: na een keuze er even heen.
+  function toonKaartje() {
+    if (!popup || !window.matchMedia("(max-width: 991px)").matches) return;
+    var r = popup.getBoundingClientRect();
+    if (r.top >= 90 && r.bottom <= window.innerHeight) return;
+    if (window.lmoLenis) window.lmoLenis.scrollTo(popup, { offset: -100, duration: 0.9 });
+    else popup.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   var zet = function (sel, tekst) { var el = popup && popup.querySelector(sel); if (el) el.textContent = tekst; };
 
@@ -559,4 +568,139 @@ if (document.readyState === 'loading') {
   }
 
   kies(opKaart[0], false);
+})();
+
+
+
+/* ---------------------------------------------------------------
+   Mobiel menu (Figma: "Mobiel menu – open"). De Menu-knop in de nav
+   opent een donkergroen paneel met zoekveld, de nav-links genummerd
+   (01–07), de nieuwsbriefknop en het e-mailadres uit de footer.
+   De links komen uit .nav-menu, dus aanpassen in de Nav-component
+   werkt hier vanzelf door.
+   --------------------------------------------------------------- */
+(function () {
+  var knop = document.querySelector(".nav .menuknop");
+  var links = [].slice.call(document.querySelectorAll(".nav .nav-menu a"));
+  if (!knop || !links.length) return;
+
+  var esc = function (t) {
+    return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  };
+  var PIJL = '<svg aria-hidden="true" width="1.5rem" height="1.5rem" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" d="M5 12H19M13 18L19 12L13 6"/></svg>';
+  var ZOEK = '<svg aria-hidden="true" width="1.25rem" height="1.25rem" viewBox="0 0 20 20" fill="none"><path stroke="currentColor" stroke-width="1.66" d="M9.16 14.99A5.83 5.83 0 1 0 9.16 3.33a5.83 5.83 0 0 0 0 11.66Z"/><path stroke="currentColor" stroke-width="1.66" stroke-linecap="round" d="M16.66 16.66 13.75 13.75"/></svg>';
+  var mail = document.querySelector('footer a[href^="mailto:"]');
+
+  var paneel = document.createElement("div");
+  paneel.className = "lmo-menu";
+  paneel.id = "lmo-menu";
+  paneel.hidden = true;
+  paneel.setAttribute("role", "dialog");
+  paneel.setAttribute("aria-modal", "true");
+  paneel.setAttribute("aria-label", "Menu");
+  paneel.innerHTML =
+    '<div class="lmo-menu-binnen">' +
+      '<form class="zoek-balk lmo-menu-zoek" role="search" action="/zoeken">' +
+        '<label class="lmo-sr" for="lmo-menu-zoek">Zoek in het leernetwerk</label>' +
+        '<div class="zoekveld">' + ZOEK + '<input id="lmo-menu-zoek" class="zoekinvoer" type="search" name="q" autocomplete="off" placeholder="Zoek in het leernetwerk"></div>' +
+        '<button type="submit" class="zoekknop-formulier lmo-formknop" aria-label="Zoeken"><span class="knop-rol"><span class="knop-rol-tekst">Zoeken</span></span><span class="lmo-formknop-icoon">' + ZOEK + "</span></button>" +
+      "</form>" +
+      '<ol class="lmo-menu-lijst">' +
+        links.map(function (a, i) {
+          var nr = (i + 1 < 10 ? "0" : "") + (i + 1);
+          return '<li><a class="lmo-menu-link" href="' + esc(a.getAttribute("href") || "#") + '">' +
+            '<span class="lmo-menu-nr" aria-hidden="true">' + nr + "</span>" +
+            '<span class="lmo-menu-tekst">' + esc(a.textContent.trim()) + "</span>" +
+            '<span class="lmo-menu-pijl">' + PIJL + "</span></a></li>";
+        }).join("") +
+      "</ol>" +
+      '<div class="lmo-menu-acties">' +
+        '<a href="/#nieuwsbrief" class="knop lmo-menu-knop" data-menu-sluit>' +
+          '<span class="knop-pil is-koraal"><span class="knop-rol"><span class="knop-rol-tekst">Schrijf je in voor de nieuwsbrief</span></span></span>' +
+          '<span class="knop-pijl is-koraal">' + PIJL + PIJL.replace("<svg ", '<svg class="knop-pijl-in" ') + "</span></a>" +
+      "</div>" +
+    "</div>";
+  if (mail) {
+    var m = mail.cloneNode(true);
+    m.classList.add("lmo-menu-mail");
+    paneel.querySelector(".lmo-menu-acties").appendChild(m);
+  }
+  document.body.appendChild(paneel);
+
+  var open = false;
+  var gsap = window.gsap;
+  var stil = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var tekst = knop.textContent.trim() || "Menu";
+
+  knop.setAttribute("role", "button");
+  knop.setAttribute("aria-controls", "lmo-menu");
+  knop.setAttribute("aria-expanded", "false");
+
+  function zetKnop(dicht) {
+    var rol = knop.querySelector(".knop-rol-tekst");
+    if (rol) rol.textContent = dicht ? tekst : "Sluiten";
+    else knop.textContent = dicht ? tekst : "Sluiten";
+  }
+
+  function openMenu() {
+    if (open) return;
+    open = true;
+    paneel.hidden = false;
+    document.documentElement.classList.add("lmo-menu-open");
+    knop.setAttribute("aria-expanded", "true");
+    zetKnop(false);
+    if (window.lmoLenis) window.lmoLenis.stop();
+    if (gsap && !stil.matches) {
+      gsap.fromTo(paneel, { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 0.6, ease: "expo.out" });
+      gsap.fromTo(paneel.querySelectorAll(".lmo-menu-zoek, .lmo-menu-lijst li, .lmo-menu-acties > *"),
+        { autoAlpha: 0, y: "1rem" },
+        { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035, delay: 0.1, clearProps: "transform,opacity,visibility" });
+    }
+  }
+
+  function sluit(terugFocus) {
+    if (!open) return;
+    open = false;
+    document.documentElement.classList.remove("lmo-menu-open");
+    knop.setAttribute("aria-expanded", "false");
+    zetKnop(true);
+    if (window.lmoLenis) window.lmoLenis.start();
+    var klaar = function () { if (!open) paneel.hidden = true; };
+    if (gsap && !stil.matches) {
+      gsap.to(paneel, { clipPath: "inset(0 0 100% 0)", duration: 0.4, ease: "power3.in", onComplete: klaar });
+      setTimeout(klaar, 500);
+    } else klaar();
+    if (terugFocus) knop.focus();
+  }
+
+  knop.addEventListener("click", function (e) {
+    e.preventDefault();
+    open ? sluit(true) : openMenu();
+  });
+  knop.addEventListener("keydown", function (e) {
+    if (e.key === " ") { e.preventDefault(); knop.click(); }
+  });
+
+  paneel.addEventListener("click", function (e) {
+    var a = e.target.closest("a");
+    if (a) sluit(false);  // naar een link of anker: menu dicht
+  });
+  paneel.querySelector("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var q = paneel.querySelector("input").value.trim();
+    window.location.href = q ? "/zoeken?q=" + encodeURIComponent(q) : "/zoeken";
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (!open) return;
+    if (e.key === "Escape") { e.preventDefault(); sluit(true); return; }
+    if (e.key !== "Tab") return;
+    var els = [knop].concat([].slice.call(paneel.querySelectorAll("a[href], button, input")));
+    var eerste = els[0], laatste = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === eerste) { e.preventDefault(); laatste.focus(); }
+    else if (!e.shiftKey && document.activeElement === laatste) { e.preventDefault(); eerste.focus(); }
+  });
+
+  // Naar desktopbreedte: menu dicht.
+  window.matchMedia("(min-width: 768px)").addEventListener("change", function (m) { if (m.matches) sluit(false); });
 })();

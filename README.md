@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.3/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,8 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.3/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.3/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -78,6 +78,10 @@ Op de homepage staat in het gemeentenblok een verborgen collectielijst (`.gemeen
 
 Klik op een punt of chip wisselt het kaartje. De gemeente met de laagste volgorde staat bij het laden open.
 
+## Mobiel menu
+
+De Menu-knop in de nav (mobiel) opent een donkergroen paneel volgens Figma: zoekveld, de nav-links genummerd 01–07, de knop "Schrijf je in voor de nieuwsbrief" en het e-mailadres uit de footer. De links komen uit `.nav-menu` in de Nav-component. Esc of "Sluiten" sluit het menu; een link kiezen ook.
+
 ## Zoeken
 
 - **Overlay**: de zoekknop in de nav (of `/`) opent het zoekpaneel uit Figma: suggesties, "Direct naar" (beste 3), veel gezocht en een knop naar alle resultaten. ↑ ↓ kiezen, Enter opent, Esc sluit.
@@ -96,10 +100,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.8.0
+./release.sh 0.9.0
 ```
 
-Het script pusht, maakt tag `v0.8.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.9.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
