@@ -428,7 +428,11 @@ html.lenis body { height: auto; }
 .lmo-formknop-icoon { display: none; }
 
 /* --- overlay ------------------------------------------------------- */
-.zoek-overlay { position: fixed; inset: 0; z-index: 99; }
+.zoek-overlay {
+  position: fixed; inset: 0; z-index: 99;
+  font-family: var(--_typografie---font--sans, "Google Sans Flex", Arial, sans-serif);
+  color: var(--_kleuren---groen--950, #060f05);
+}
 .zoek-overlay[hidden] { display: none; }
 .zoek-scrim { position: absolute; inset: 0; background-color: rgba(6, 15, 5, 0.2); }
 
@@ -800,6 +804,7 @@ button.chip {
   overscroll-behavior: contain;
   background-color: var(--_kleuren---groen--900, #182a12);
   color: var(--_kleuren---neutraal--wit, #fff);
+  font-family: var(--_typografie---font--sans, "Google Sans Flex", Arial, sans-serif);
 }
 .lmo-menu[hidden] { display: none; }
 .lmo-menu-binnen {
