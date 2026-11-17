@@ -20,12 +20,20 @@ git push origin "v$versie"
 
 basis="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie"
 
-# jsDelivr onthoudt een 404 als het bestand werd opgevraagd vóór de tag er
-# was. Even wachten en de cache legen voorkomt dat.
-sleep 10
-for f in css/lmo.min.css css/lmo.css js/lmo.min.js js/lmo.js js/zoeken.min.js js/zoeken.js data/zoekindex.json; do
-  curl -s -o /dev/null "https://purge.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie/$f"
+# jsDelivr onthoudt een 404 als een bestand werd opgevraagd vóór de tag er
+# was. Daarom per bestand controleren en de cache legen tot het er is.
+bestanden="css/lmo.min.css css/lmo.css js/lmo.min.js js/lmo.js js/zoeken.min.js js/zoeken.js data/zoekindex.json"
+sleep 5
+for f in $bestanden; do
+  for poging in 1 2 3 4 5 6 7 8; do
+    code=$(curl -s -o /dev/null -w "%{http_code}" "$basis/$f")
+    [ "$code" = "200" ] && break
+    curl -s -o /dev/null "https://purge.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie/$f"
+    sleep 5
+  done
+  if [ "$code" = "200" ]; then echo "ok   $f"; else echo "FOUT $f ($code) — probeer later: curl https://purge.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie/$f"; fi
 done
+
 cat <<EOF
 
 v$versie staat klaar. Zet in Webflow (Site settings › Custom code):
