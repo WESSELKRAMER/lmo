@@ -78,3 +78,155 @@ html.lenis body { height: auto; }
   transition-duration: 1ms;
   transition-behavior: allow-discrete;
 }
+
+/* ===============================================================
+   HOVERS
+   Kleuren via de Webflow-variabelen (Kleuren-collectie).
+   =============================================================== */
+:root {
+  --lmo-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------------------------------------------------------
+   Themalijst — Directional List Hover (Osmo Supply)
+   lmo.js zet data-directional-hover op .themalijst en voegt per
+   .themarij een tegel toe die vanaf de kant van de muis inschuift.
+   --------------------------------------------------------------- */
+.themarij {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.themarij > :not([data-directional-hover-tile]) {
+  position: relative;
+  z-index: 1;
+}
+
+.themarij-tegel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--_kleuren---groen--900, #182a12);
+}
+
+[data-directional-hover-tile] {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(-100%);
+  will-change: transform;
+}
+
+.themarij,
+.themarij .themarij-meta,
+.themarij-pijl {
+  transition: color 0.4s var(--lmo-ease), transform 0.5s var(--lmo-ease);
+}
+
+.themarij[data-status^="enter"] { color: var(--_kleuren---zand--100, #f0eee5); }
+.themarij[data-status^="enter"] .themarij-meta { color: var(--_kleuren---zand--400, #c8c2b3); }
+.themarij[data-status^="enter"] .themarij-pijl {
+  color: var(--_kleuren---koraal--500, #f28658);
+  transform: translateX(0.375rem);
+}
+
+/* ---------------------------------------------------------------
+   Kerncijfers — de accentbalk links groeit over de hele kaart
+   (Figma: Kerncijfer, Status=Hover)
+   --------------------------------------------------------------- */
+.kerncijfer {
+  --lmo-accent: var(--_kleuren---koraal--500, #f28658);
+  --lmo-op-accent: var(--_kleuren---groen--950, #060f05);
+  transition: box-shadow 0.6s var(--lmo-ease);
+}
+.kerncijfer.is-blauw {
+  --lmo-accent: var(--_kleuren---blauw--500, #237ba1);
+  --lmo-op-accent: var(--_kleuren---neutraal--wit, #fff);
+}
+.kerncijfer.is-groen {
+  --lmo-accent: var(--_kleuren---groen--900, #182a12);
+  --lmo-op-accent: var(--_kleuren---zand--100, #f0eee5);
+}
+.kerncijfer.is-zand {
+  --lmo-accent: var(--_kleuren---zand--400, #c8c2b3);
+}
+
+.kerncijfer .cijfer,
+.kerncijfer .meta-mono { transition: color 0.4s var(--lmo-ease); }
+
+.kerncijfer:hover { box-shadow: inset 30rem 0 0 0 var(--lmo-accent); }
+.kerncijfer:hover .cijfer,
+.kerncijfer:hover .meta-mono { color: var(--lmo-op-accent); }
+
+/* ---------------------------------------------------------------
+   Knoppen (.knop = .knop-pil + .knop-pijl)
+   Figma: tekst rolt omhoog, pijl schuift door, vlak wordt lichter.
+   lmo.js zet de tekst in .knop-rol en zet een tweede pijl klaar.
+   --------------------------------------------------------------- */
+.knop-pil,
+.knop-pijl {
+  transition: background-color 0.3s var(--lmo-ease), border-color 0.3s var(--lmo-ease);
+}
+
+.knop-rol {
+  display: block;
+  overflow: hidden;
+  line-height: 1.25;
+}
+
+.knop-rol-tekst {
+  display: block;
+  text-shadow: 0 1.5em currentColor;   /* de kopie die van onder inrolt */
+  transition: transform 0.5s var(--lmo-ease);
+}
+
+.knop-pijl {
+  position: relative;
+  overflow: hidden;
+}
+
+.knop-pijl svg {
+  transition: transform 0.5s var(--lmo-ease);
+}
+
+.knop-pijl .knop-pijl-in {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  transform: translateX(-2.25rem);
+}
+
+.knop:hover .knop-rol-tekst { transform: translateY(-1.5em); }
+.knop:hover .knop-pijl svg { transform: translateX(2.25rem); }
+.knop:hover .knop-pijl .knop-pijl-in { transform: translateX(0); }
+
+/* Vlakkleur bij hover per variant */
+.knop:hover .knop-pil,
+.knop:hover .knop-pijl { background-color: var(--_kleuren---groen--800, #2d3e27); }
+
+.knop:hover .knop-pil.is-koraal,
+.knop:hover .knop-pijl.is-koraal { background-color: var(--_kleuren---koraal--400, #f6946b); }
+
+.knop:hover .knop-pil.is-outline,
+.knop:hover .knop-pijl.is-outline {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--_kleuren---zand--100, #f0eee5);
+}
+
+.knop:focus-visible {
+  outline: 2px solid var(--_kleuren---koraal--500, #f28658);
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+/* Minder beweging: alleen kleurwissels, geen verschuivingen */
+@media (prefers-reduced-motion: reduce) {
+  [data-directional-hover-tile],
+  .knop-rol-tekst,
+  .knop-pijl svg,
+  .themarij-pijl { transition: none; }
+  .knop:hover .knop-rol-tekst,
+  .knop:hover .knop-pijl svg,
+  .themarij[data-status^="enter"] .themarij-pijl { transform: none; }
+  .knop .knop-pijl-in { display: none; }
+}

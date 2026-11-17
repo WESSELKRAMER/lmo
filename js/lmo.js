@@ -94,3 +94,118 @@
     window.addEventListener("load", function () { window.ScrollTrigger.refresh(); });
   }
 })();
+
+
+/* ---------------------------------------------------------------
+   Knoppen: tekst in een rol-span (rolt bij hover omhoog) en een
+   tweede pijl die bij hover van links binnenschuift. CSS in lmo.css.
+   --------------------------------------------------------------- */
+(function () {
+  document.querySelectorAll(".knop").forEach(function (knop) {
+    var pil = knop.querySelector(".knop-pil");
+    if (pil && pil.children.length === 0 && pil.textContent.trim()) {
+      var rol = document.createElement("span");
+      rol.className = "knop-rol";
+      var tekst = document.createElement("span");
+      tekst.className = "knop-rol-tekst";
+      tekst.textContent = pil.textContent.trim();
+      rol.appendChild(tekst);
+      pil.textContent = "";
+      pil.appendChild(rol);
+    }
+
+    var pijl = knop.querySelector(".knop-pijl svg");
+    if (pijl && !knop.querySelector(".knop-pijl-in")) {
+      var kopie = pijl.cloneNode(true);
+      kopie.classList.add("knop-pijl-in");
+      pijl.parentNode.appendChild(kopie);
+    }
+  });
+})();
+
+
+/* ---------------------------------------------------------------
+   Themalijst: koppelen aan de Directional List Hover hieronder.
+   Webflow-markup blijft zoals hij is; attributen en tegels komen hier.
+   --------------------------------------------------------------- */
+(function () {
+  document.querySelectorAll(".themalijst").forEach(function (lijst) {
+    lijst.setAttribute("data-directional-hover", "");
+    lijst.setAttribute("data-type", "y");
+    lijst.querySelectorAll(".themarij").forEach(function (rij) {
+      rij.setAttribute("data-directional-hover-item", "");
+      if (!rij.querySelector("[data-directional-hover-tile]")) {
+        var tegel = document.createElement("div");
+        tegel.className = "themarij-tegel";
+        tegel.setAttribute("data-directional-hover-tile", "");
+        rij.insertBefore(tegel, rij.firstChild);
+      }
+    });
+  });
+})();
+
+
+/* ---------------------------------------------------------------
+   Directional List Hover — Osmo Supply (ongewijzigd overgenomen)
+   --------------------------------------------------------------- */
+function initDirectionalListHover() {
+
+  const directionMap = {
+    top: 'translateY(-100%)',
+    bottom: 'translateY(100%)',
+    left: 'translateX(-100%)',
+    right: 'translateX(100%)'
+  };
+
+  document.querySelectorAll('[data-directional-hover]').forEach(container => {
+    const type = container.getAttribute('data-type') || 'all';
+
+    container.querySelectorAll('[data-directional-hover-item]').forEach(item => {
+      const tile = item.querySelector('[data-directional-hover-tile]');
+      if (!tile) return;
+
+      item.addEventListener('mouseenter', e => {
+        const dir = getDirection(e, item, type);
+        tile.style.transition = 'none';
+        tile.style.transform = directionMap[dir] || 'translate(0, 0)';
+        void tile.offsetHeight;
+        tile.style.transition = '';
+        tile.style.transform = 'translate(0%, 0%)';
+        item.setAttribute('data-status', `enter-${dir}`);
+      });
+
+      item.addEventListener('mouseleave', e => {
+        const dir = getDirection(e, item, type);
+        item.setAttribute('data-status', `leave-${dir}`);
+        tile.style.transform = directionMap[dir] || 'translate(0, 0)';
+      });
+    });
+
+    function getDirection(event, el, type) {
+      const { left, top, width: w, height: h } = el.getBoundingClientRect();
+      const x = event.clientX - left;
+      const y = event.clientY - top;
+
+      if (type === 'y') return y < h / 2 ? 'top' : 'bottom';
+      if (type === 'x') return x < w / 2 ? 'left' : 'right';
+
+      const distances = {
+        top: y,
+        right: w - x,
+        bottom: h - y,
+        left: x
+      };
+
+      return Object.entries(distances).reduce((a, b) => (a[1] < b[1] ? a : b))[0];
+    }
+  });
+}
+
+// Initialize Directional List Hover
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initDirectionalListHover();
+  });
+} else {
+  initDirectionalListHover();
+}
