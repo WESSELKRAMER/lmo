@@ -475,7 +475,14 @@
     document.querySelectorAll(".hero-zoeken form").forEach(function (form) {
       var veld = form.querySelector("input[type=search], input[type=text]");
       var knop = form.querySelector("[type=submit]");
-      if (knop) knop.removeAttribute("disabled");
+      if (knop) {
+        // Webflow zet de knop op disabled zolang zijn formulierbeveiliging laadt;
+        // dit formulier verstuurt niets naar Webflow, dus de knop blijft bruikbaar.
+        knop.removeAttribute("disabled");
+        new MutationObserver(function () {
+          if (knop.hasAttribute("disabled")) knop.removeAttribute("disabled");
+        }).observe(knop, { attributes: true, attributeFilter: ["disabled"] });
+      }
       var stuur = function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
