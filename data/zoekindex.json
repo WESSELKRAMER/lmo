@@ -1,0 +1,298 @@
+{
+  "_uitleg": "Zoekindex voor de site. Tijdelijke voorbeeldcontent tot het CMS er is; daarna kan dit bestand uit het CMS worden gegenereerd. soort: praktijkvoorbeeld | nieuws | kennisbank | agenda. datum: JJJJ-MM-DD.",
+  "veelGezocht": ["Meedoen vanaf dag één", "AMV", "Duurzame opvanglocaties"],
+  "zoektermen": [
+    "taalcoach", "taalles voor nieuwkomers", "taalcafé", "taalmaatje", "taalontwikkeling kinderen",
+    "taalaanbod", "taalniveau", "werk en meedoen", "werkervaring", "vrijwilligers", "buurtkamer",
+    "huisarts en ggz", "gezondheid", "onderwijs", "inburgering", "alleenstaande minderjarigen",
+    "kleinschalige opvang", "opvanglocatie", "kantoorpand ombouwen", "bestuurlijke inbedding",
+    "draagvlak in de wijk", "huisvesting", "statushouders", "participatie", "begeleiding"
+  ],
+  "items": [
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Taalles vanaf dag één in de bibliotheek",
+      "samenvatting": "Bibliotheek en opvanglocatie bieden samen dagelijks taalles aan, ook voor wie nog op een vaste plek wacht.",
+      "gemeente": "Hengelo",
+      "datum": "2026-09-12",
+      "beeld": "https://cdn.prod.website-files.com/6afc02b467ac61094fa2dbf1/6afc050ee7f3e3e0b9fac35a_praktijk-taalles.jpg",
+      "trefwoorden": ["vroegtijdig inburgeren", "bibliotheek", "taalles"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Zwolle start taalcafé met vrijwilligers uit de buurt",
+      "samenvatting": "Elke woensdag schuiven buurtbewoners en nieuwkomers aan voor koffie en een gesprek in het Nederlands.",
+      "gemeente": "Zwolle",
+      "datum": "2026-10-14",
+      "trefwoorden": ["taalcafé", "vrijwilligers", "buurt"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Handreiking taalaanbod in de opvang",
+      "samenvatting": "Welk taalaanbod werkt in welke fase, en hoe organiseer je het samen met onderwijs en vrijwilligers?",
+      "formaat": "Pdf · 12 p.",
+      "datum": "2026-06-30",
+      "trefwoorden": ["taalaanbod", "onderwijs", "handreiking"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Ondernemers als taalmaatje op de werkvloer",
+      "samenvatting": "Lokale ondernemers koppelen nieuwkomers aan een collega die helpt met vaktaal en het dagelijkse werk.",
+      "gemeente": "Deventer",
+      "datum": "2026-08-21",
+      "beeld": "https://cdn.prod.website-files.com/6afc02b467ac61094fa2dbf1/6afc0510e1b7ef267ecd1d68_samen-leren.jpg",
+      "trefwoorden": ["taalmaatje", "werk", "ondernemers"],
+      "url": "#"
+    },
+    {
+      "soort": "agenda",
+      "titel": "Leernetwerkdag: taal en meedoen vanaf dag één",
+      "samenvatting": "Een dag vol werksessies over taal, werk en meedoen, met praktijkvoorbeelden uit elf gemeenten.",
+      "gemeente": "Utrecht",
+      "datum": "2026-05-20",
+      "trefwoorden": ["leernetwerkdag", "meedoen vanaf dag één", "werksessies"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Nieuwe taalcoaches voor alleenstaande minderjarigen",
+      "samenvatting": "Arnhem breidt het aantal taalcoaches uit, zodat jongeren sneller kunnen instromen op school.",
+      "gemeente": "Arnhem",
+      "datum": "2026-10-02",
+      "trefwoorden": ["taalcoach", "AMV", "alleenstaande minderjarigen", "onderwijs"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Taalles op locatie in het voormalige kantoorpand",
+      "samenvatting": "In de nieuwe opvanglocatie is een leslokaal ingericht waar dagelijks taalles wordt gegeven.",
+      "gemeente": "Enschede",
+      "datum": "2026-07-03",
+      "beeld": "https://cdn.prod.website-files.com/6afc02b467ac61094fa2dbf1/6afc050f1bdf7acc37f28acc_praktijk-kantoorpand.jpg",
+      "trefwoorden": ["kantoorpand", "opvanglocatie", "taalles"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Factsheet: taalniveau en doorstroom naar werk",
+      "samenvatting": "Cijfers en inzichten over de relatie tussen taalniveau, begeleiding en duurzaam werk.",
+      "formaat": "Factsheet · 4 p.",
+      "datum": "2026-05-11",
+      "trefwoorden": ["taalniveau", "werk", "begeleiding"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Taalles vanaf de eerste week in de opvang",
+      "samenvatting": "Bibliotheek en vrijwilligers starten direct met taalles, zodat bewoners al Nederlands spreken als ze een woning krijgen.",
+      "gemeente": "Hengelo",
+      "datum": "2026-04-18",
+      "beeld": "https://cdn.prod.website-files.com/6afc02b467ac61094fa2dbf1/6afc050ee7f3e3e0b9fac35a_praktijk-taalles.jpg",
+      "trefwoorden": ["vroegtijdig inburgeren en taal", "vrijwilligers"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Taalcafé in de buurtkamer van de opvang",
+      "samenvatting": "Bewoners en buren oefenen samen Nederlands; de buurtkamer is drie middagen per week open.",
+      "gemeente": "Arnhem",
+      "datum": "2026-03-27",
+      "trefwoorden": ["taalcafé", "buurtkamer", "draagvlak in de wijk"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Taalontwikkeling van kinderen in de noodopvang",
+      "samenvatting": "Een voorschool op locatie helpt jonge kinderen spelenderwijs met taal, in afwachting van een vaste school.",
+      "gemeente": "Groningen",
+      "datum": "2026-02-09",
+      "trefwoorden": ["taalontwikkeling kinderen", "onderwijs", "voorschool"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Groningen koppelt elke nieuwe bewoner aan een taalmaatje",
+      "samenvatting": "Binnen een maand na aankomst heeft iedere bewoner een taalmaatje uit de buurt.",
+      "gemeente": "Groningen",
+      "datum": "2026-09-30",
+      "trefwoorden": ["taalmaatje", "vrijwilligers"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Taalaanbod in de opvang krijgt extra geld",
+      "samenvatting": "Elf gemeenten uit de kerngroep bundelen middelen om het taalaanbod vanaf dag één uit te breiden.",
+      "gemeente": "Utrecht",
+      "datum": "2026-09-16",
+      "trefwoorden": ["taalaanbod", "financiering"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Leiden test taalapp voor wachtende bewoners",
+      "samenvatting": "Een proef met een taalapp moet de wachttijd tot de eerste les zinvol maken.",
+      "gemeente": "Leiden",
+      "datum": "2026-08-28",
+      "trefwoorden": ["taalapp", "taalles voor nieuwkomers"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Rotterdam opent taalhuis bij de opvanglocatie",
+      "samenvatting": "Het taalhuis is er voor bewoners én buurtbewoners die hun Nederlands willen verbeteren.",
+      "gemeente": "Rotterdam",
+      "datum": "2026-08-07",
+      "trefwoorden": ["taalhuis", "buurt"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Hengelo: taalcoaches leren van elkaar",
+      "samenvatting": "Taalcoaches uit vijf gemeenten wisselden ervaringen uit over lesgeven aan wie net is aangekomen.",
+      "gemeente": "Hengelo",
+      "datum": "2026-07-15",
+      "trefwoorden": ["taalcoach", "leernetwerk"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Zwolle: taal en werk gaan samen op",
+      "samenvatting": "Een leerwerktraject combineert taalles met meelopen bij een werkgever uit de regio.",
+      "gemeente": "Zwolle",
+      "datum": "2026-06-24",
+      "trefwoorden": ["werk en meedoen", "taalles", "werkervaring"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Utrecht meet taalniveau bij instroom",
+      "samenvatting": "Met een korte intake weet de gemeente direct welk taalaanbod past bij een nieuwe bewoner.",
+      "gemeente": "Utrecht",
+      "datum": "2026-06-02",
+      "trefwoorden": ["taalniveau", "intake"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Werkboek taalcoaching voor vrijwilligers",
+      "samenvatting": "Praktische opdrachten en gesprekskaarten voor vrijwilligers die nieuwkomers helpen met taal.",
+      "formaat": "Pdf · 28 p.",
+      "datum": "2026-04-02",
+      "trefwoorden": ["taalcoach", "vrijwilligers", "werkboek"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Checklist taalaanbod in de eerste maand",
+      "samenvatting": "Wat regel je in week één tot vier, en wie is waarvoor verantwoordelijk?",
+      "formaat": "Checklist · 2 p.",
+      "datum": "2026-03-14",
+      "trefwoorden": ["taalaanbod", "meedoen vanaf dag één"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Onderzoek: taal en welzijn bij jongeren",
+      "samenvatting": "Hoe taalvaardigheid samenhangt met welzijn en schoolsucces van alleenstaande minderjarigen.",
+      "formaat": "Pdf · 36 p.",
+      "datum": "2026-02-20",
+      "trefwoorden": ["AMV", "alleenstaande minderjarigen", "welzijn"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Model samenwerkingsafspraken taal en onderwijs",
+      "samenvatting": "Een voorbeeldconvenant tussen gemeente, opvang en onderwijs over het taalaanbod.",
+      "formaat": "Docx · 6 p.",
+      "datum": "2026-01-28",
+      "trefwoorden": ["onderwijs", "samenwerking", "taalaanbod"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Presentatie: zo bouw je een taalcafé op",
+      "samenvatting": "De slides van de werksessie over het opzetten van een taalcafé met vrijwilligers uit de buurt.",
+      "formaat": "Pdf · 18 p.",
+      "datum": "2025-11-19",
+      "trefwoorden": ["taalcafé", "vrijwilligers", "presentatie"],
+      "url": "#"
+    },
+    {
+      "soort": "agenda",
+      "titel": "Werksessie taalcoaching voor gemeenten",
+      "samenvatting": "Ervaringen delen over het werven, opleiden en begeleiden van taalcoaches.",
+      "gemeente": "Zwolle",
+      "datum": "2026-12-03",
+      "trefwoorden": ["taalcoach", "werksessie"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Meelopen bij ondernemers uit de wijk",
+      "samenvatting": "Bewoners doen werkervaring op bij lokale bedrijven. Dat levert contacten, zelfvertrouwen en soms een eerste baan op.",
+      "gemeente": "Zwolle",
+      "datum": "2026-05-06",
+      "beeld": "https://cdn.prod.website-files.com/6afc02b467ac61094fa2dbf1/6afc050e57a5d5f628845604_praktijk-meelopen.jpg",
+      "trefwoorden": ["meedoen vanaf dag één", "werkervaring", "ondernemers"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Van leeg kantoorpand naar opvang voor tien jaar",
+      "samenvatting": "Een kantoor werd omgebouwd tot opvang met een buurtkamer en werkplaats die ook open staan voor omwonenden.",
+      "gemeente": "Leiden",
+      "datum": "2026-04-29",
+      "beeld": "https://cdn.prod.website-files.com/6afc02b467ac61094fa2dbf1/6afc050f1bdf7acc37f28acc_praktijk-kantoorpand.jpg",
+      "trefwoorden": ["duurzame opvanglocaties", "kantoorpand ombouwen", "buurtkamer"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Arnhem opent buurtkamer in opvanglocatie voor de hele wijk",
+      "samenvatting": "De buurtkamer is een ontmoetingsplek voor bewoners en omwonenden.",
+      "gemeente": "Arnhem",
+      "datum": "2026-10-28",
+      "trefwoorden": ["buurtkamer", "draagvlak in de wijk", "nieuws uit gemeenten"],
+      "url": "#"
+    },
+    {
+      "soort": "nieuws",
+      "titel": "Zo regelen gemeenten huisarts en GGZ in de eerste weken",
+      "samenvatting": "Verslag van de sessie over zorg en welzijn: wat werkt bij de eerste zorgvragen van nieuwe bewoners.",
+      "gemeente": "Utrecht",
+      "datum": "2026-10-14",
+      "trefwoorden": ["zorg en welzijn", "huisarts en ggz", "gezondheid", "sessieverslag"],
+      "url": "#"
+    },
+    {
+      "soort": "kennisbank",
+      "titel": "Handreiking: opvang stevig verankeren in de gemeentelijke organisatie",
+      "samenvatting": "Hoe je opvang bestuurlijk inbedt, met rollen, overleggen en een voorbeeldplanning.",
+      "formaat": "Pdf · 24 p.",
+      "datum": "2026-10-02",
+      "trefwoorden": ["interne organisatie", "bestuurlijke inbedding", "opbrengst"],
+      "url": "#"
+    },
+    {
+      "soort": "praktijkvoorbeeld",
+      "titel": "Kleinschalige opvang voor jongeren in de wijk",
+      "samenvatting": "Kleine woongroepen met vaste mentoren geven alleenstaande minderjarigen rust en een netwerk in de buurt.",
+      "gemeente": "Rotterdam",
+      "datum": "2026-01-15",
+      "trefwoorden": ["kleinschalige opvang", "AMV", "alleenstaande minderjarigen", "mentoren"],
+      "url": "#"
+    },
+    {
+      "soort": "agenda",
+      "titel": "Excursie: duurzame opvanglocaties in Leiden",
+      "samenvatting": "Bezoek aan het omgebouwde kantoorpand, met een gesprek over beheer en draagvlak.",
+      "gemeente": "Leiden",
+      "datum": "2027-02-11",
+      "trefwoorden": ["duurzame opvanglocaties", "excursie"],
+      "url": "#"
+    }
+  ]
+}

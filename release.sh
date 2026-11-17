@@ -23,7 +23,7 @@ basis="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie"
 # jsDelivr onthoudt een 404 als het bestand werd opgevraagd vóór de tag er
 # was. Even wachten en de cache legen voorkomt dat.
 sleep 10
-for f in css/lmo.min.css css/lmo.css js/lmo.min.js js/lmo.js; do
+for f in css/lmo.min.css css/lmo.css js/lmo.min.js js/lmo.js js/zoeken.min.js js/zoeken.js data/zoekindex.json; do
   curl -s -o /dev/null "https://purge.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie/$f"
 done
 cat <<EOF
@@ -38,6 +38,7 @@ Footer:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
 <script src="$basis/js/lmo.min.js"></script>
+<script src="$basis/js/zoeken.min.js"></script>
 
 Daarna Webflow opnieuw publiceren.
 EOF

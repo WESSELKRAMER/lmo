@@ -8,6 +8,8 @@ Webflow laadt de bestanden via [jsDelivr](https://www.jsdelivr.com), rechtstreek
 |---|---|
 | `css/lmo.css` | Font-smoothing, vloeiende rem-schaal, logo-marquee, Lenis-CSS, verbergen van elementen tot GSAP ze animeert |
 | `js/lmo.js` | Lenis smooth scroll op de GSAP-ticker, en animaties via `data-lmo`-attributen |
+| `js/zoeken.js` | Zoekoverlay en resultatenpagina (/zoeken) |
+| `data/zoekindex.json` | Zoekindex (voorbeeldcontent tot het CMS er is) |
 | `release.sh` | Tagt een versie en print de code voor Webflow |
 
 ## In Webflow
@@ -16,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.5.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -24,7 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.5.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -63,6 +66,12 @@ De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de
 - **Logo-marquee**: 4 s per logo, met pauzeknop.
 - **Kerncijfers**: tellen op vanaf 0 als ze in beeld komen.
 
+## Zoeken
+
+- **Overlay**: de zoekknop in de nav (of `/`) opent het zoekpaneel uit Figma: suggesties, "Direct naar" (beste 3), veel gezocht en een knop naar alle resultaten. ↑ ↓ kiezen, Enter opent, Esc sluit.
+- **Resultatenpagina** `/zoeken?q=…`: in Webflow staan alleen de kop en een leeg blok met `data-lmo-zoekresultaten`; `zoeken.js` vult zoekbalk, filters per soort, sorteren, resultaten (8 per pagina) en paginering. De h1 met `data-lmo-zoektitel` krijgt "24 resultaten voor …".
+- **Index**: `data/zoekindex.json`. Per item: `soort` (praktijkvoorbeeld, nieuws, kennisbank, agenda), `titel`, `samenvatting`, `gemeente`, `datum`, `formaat`, `beeld`, `trefwoorden`, `url`. `zoektermen` voeden de suggesties, `veelGezocht` de tags. Zodra er een CMS is, kan dit bestand daaruit gegenereerd worden.
+
 ## Smooth scroll (Lenis)
 
 Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-motion`.
@@ -75,10 +84,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.6.0
+./release.sh 0.7.0
 ```
 
-Het script pusht, maakt tag `v0.6.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.7.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
