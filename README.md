@@ -16,7 +16,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.4.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.5.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -24,7 +24,7 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.4.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.5.0/js/lmo.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -47,11 +47,21 @@ Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zond
 
 | Onderdeel | Effect |
 |---|---|
-| Themalijst (`.themarij`) | Directional List Hover van Osmo Supply: een donkergroene tegel schuift in vanaf de kant waar de muis binnenkomt (boven/onder) |
+| Themalijst (`.themarij`) en nieuws (`.nieuwsitem`) | Directional List Hover van Osmo Supply: een donkerbeige tegel (Zand/200) schuift in vanaf de kant waar de muis binnenkomt |
+| Praktijkkaarten | Zachte schaduw, foto zoomt iets in, download-regel schuift op |
+| Tekstlinks | Pijl wisselt van rechts naar links |
+| Footerlinks | Koraal onderlijn groeit |
+| Tags, gemeente-chips, zoekveld | Kleurwissels en focusring uit Figma |
 | Kerncijfers (`.kerncijfer`) | De accentbalk links groeit over de hele kaart, tekst wisselt mee (Figma: Kerncijfer › Hover) |
 | Knoppen (`.knop`) | Tekst rolt omhoog, pijl schuift door, vlak wordt lichter; per variant (standaard, `is-koraal`, `is-outline`) |
 
 De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de tweede pijl zelf toe.
+
+## Animaties uit Figma
+
+- **Hero-vormen**: elke 2,5 s schuiven de vier vormen één vak met de klok mee en draaien 90° (0,9 s, ease in-out). Loopt alleen als de hero in beeld is.
+- **Logo-marquee**: 4 s per logo, met pauzeknop.
+- **Kerncijfers**: tellen op vanaf 0 als ze in beeld komen.
 
 ## Smooth scroll (Lenis)
 
@@ -65,10 +75,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.5.0
+./release.sh 0.6.0
 ```
 
-Het script pusht, maakt tag `v0.5.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.6.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
