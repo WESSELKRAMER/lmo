@@ -27,9 +27,9 @@
   // Designer zetten; handig voor terugkerende onderdelen.
   var perKlasse = {
     "fade-up": [".themas-intro", ".gemeenten-blok", ".kerncijfers-intro", ".evenement",
-                ".sectie-kop", ".beeldtekst-inhoud", ".nieuwsbrief-blok"],
+                ".sectie-kop", ".praktijkkaarten", ".beeldtekst-inhoud", ".nieuwsbrief-blok"],
     "fade":    [".beeldtekst-foto"],
-    "stagger": [".themalijst", ".cijfers", ".praktijkkaarten", ".tijdlijn"]
+    "stagger": [".themalijst", ".cijfers", ".tijdlijn"]
   };
   Object.keys(perKlasse).forEach(function (soort) {
     document.querySelectorAll(perKlasse[soort].join(",")).forEach(function (el) {
@@ -88,6 +88,81 @@
     });
   });
 
+  /* Hero-vormen — Figma: "elke 2,5 s schuiven de vormen één vak met de
+     klok mee (ease in-out, 0,9 s); elke vorm draait per stap 90° mee".
+     Raster 2×2: boog linksboven, cirkel rechtsboven, blad linksonder,
+     kwart rechtsonder. Stapt alleen als de hero in beeld is. */
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    var raster = document.querySelector(".vormen");
+    if (!raster) return;
+    var vormen = gsap.utils.toArray(".vormen > .vorm");
+    if (vormen.length !== 4) return;
+
+    // vakken met de klok mee: 0 linksboven, 1 rechtsboven, 2 rechtsonder, 3 linksonder
+    var vak = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    var start = [0, 1, 3, 2];  // DOM-volgorde → vak
+
+    function stap() {
+      // offsetLeft/offsetWidth negeren transforms, dus ook mid-animatie juist
+      return ((vormen[1].offsetLeft - vormen[0].offsetLeft) / vormen[0].offsetWidth) * 100;
+    }
+
+    function naarStap(k) {
+      return {
+        xPercent: function (i) { return (vak[(start[i] + k) % 4][0] - vak[start[i]][0]) * stap(); },
+        yPercent: function (i) { return (vak[(start[i] + k) % 4][1] - vak[start[i]][1]) * stap(); },
+        rotation: k * 90,
+        duration: 0.9,
+        ease: "power1.inOut"
+      };
+    }
+
+    var tl = gsap.timeline({ repeat: -1, paused: true });
+    for (var k = 1; k <= 4; k++) tl.to(vormen, naarStap(k), (k - 1) * 2.5 + 1.6);
+    tl.set({}, {}, 10);  // 4 stappen × 2,5 s, daarna naadloos opnieuw (360° = 0°)
+
+    var st = window.ScrollTrigger && window.ScrollTrigger.create({
+      trigger: ".hero",
+      start: "top bottom",
+      end: "bottom top",
+      onToggle: function (self) { self.isActive ? tl.play() : tl.pause(); }
+    });
+    if (!st) tl.play();
+
+    // Andere breakpoint = andere maten: afstanden opnieuw laten meten.
+    var opnieuw = function () { tl.invalidate(); };
+    if (window.ScrollTrigger) window.ScrollTrigger.addEventListener("refresh", opnieuw);
+
+    return function () {
+      if (window.ScrollTrigger) window.ScrollTrigger.removeEventListener("refresh", opnieuw);
+      tl.kill();
+      gsap.set(vormen, { clearProps: "transform" });
+    };
+  });
+
+  /* Kerncijfers tellen op als ze in beeld komen (alleen hele getallen;
+     "20 mei" blijft staan). De echte waarde staat in de HTML. */
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    var getallen = [];
+    gsap.utils.toArray(".cijfer").forEach(function (el) {
+      var tekst = el.textContent.trim();
+      if (!/^\d+$/.test(tekst)) return;
+      var doel = parseInt(tekst, 10);
+      getallen.push([el, tekst]);
+      var teller = { n: 0 };
+      el.textContent = "0";
+      gsap.to(teller, {
+        n: doel,
+        duration: 1.4,
+        ease: "power2.out",
+        onUpdate: function () { el.textContent = Math.round(teller.n); },
+        onComplete: function () { el.textContent = tekst; },
+        scrollTrigger: { trigger: el, start: "top 90%", once: true }
+      });
+    });
+    return function () { getallen.forEach(function (g) { g[0].textContent = g[1]; }); };
+  });
+
   // ScrollTrigger meet zelf opnieuw bij resize; na het laden van afbeeldingen
   // verschuiven posities nog, dus dan één keer extra meten.
   if (window.ScrollTrigger) {
@@ -125,23 +200,65 @@
 
 
 /* ---------------------------------------------------------------
-   Themalijst: koppelen aan de Directional List Hover hieronder.
-   Webflow-markup blijft zoals hij is; attributen en tegels komen hier.
+   Lijsten (thema's en nieuws): koppelen aan de Directional List Hover
+   hieronder. Webflow-markup blijft zoals hij is; attributen en tegels
+   komen hier.
    --------------------------------------------------------------- */
 (function () {
-  document.querySelectorAll(".themalijst").forEach(function (lijst) {
-    lijst.setAttribute("data-directional-hover", "");
-    lijst.setAttribute("data-type", "y");
-    lijst.querySelectorAll(".themarij").forEach(function (rij) {
-      rij.setAttribute("data-directional-hover-item", "");
-      if (!rij.querySelector("[data-directional-hover-tile]")) {
-        var tegel = document.createElement("div");
-        tegel.className = "themarij-tegel";
-        tegel.setAttribute("data-directional-hover-tile", "");
-        rij.insertBefore(tegel, rij.firstChild);
-      }
+  [[".themalijst", ".themarij"], [".tijdlijn", ".nieuwsitem"]].forEach(function (paar) {
+    document.querySelectorAll(paar[0]).forEach(function (lijst) {
+      lijst.setAttribute("data-directional-hover", "");
+      lijst.setAttribute("data-type", "y");
+      lijst.querySelectorAll(paar[1]).forEach(function (rij) {
+        rij.setAttribute("data-directional-hover-item", "");
+        if (!rij.querySelector("[data-directional-hover-tile]")) {
+          var tegel = document.createElement("div");
+          tegel.className = "lmo-tegel";
+          tegel.setAttribute("data-directional-hover-tile", "");
+          rij.insertBefore(tegel, rij.firstChild);
+        }
+      });
     });
   });
+})();
+
+
+/* ---------------------------------------------------------------
+   Tekstlinks: tweede pijl vóór het label; bij hover wisselt de pijl
+   van rechts naar links (Figma: Tekstlink › Hover).
+   --------------------------------------------------------------- */
+(function () {
+  document.querySelectorAll(".tekstlink").forEach(function (link) {
+    var pijl = link.querySelector(".tekstlink-pijl");
+    if (!pijl || link.querySelector(".tekstlink-pijl.is-voor")) return;
+    var voor = pijl.cloneNode(true);
+    voor.classList.add("is-voor");
+    voor.setAttribute("aria-hidden", "true");
+    link.insertBefore(voor, link.firstChild);
+  });
+})();
+
+
+/* ---------------------------------------------------------------
+   Logo-marquee: pauzeknop (Figma: "bouw op de site een pauzeknop in").
+   --------------------------------------------------------------- */
+(function () {
+  var sectie = document.querySelector(".logos");
+  if (!sectie || sectie.querySelector(".logos-pauze")) return;
+  var knop = document.createElement("button");
+  knop.type = "button";
+  knop.className = "logos-pauze";
+  knop.setAttribute("aria-pressed", "false");
+  knop.setAttribute("aria-label", "Logo's pauzeren");
+  knop.innerHTML =
+    '<svg class="is-pauze" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>' +
+    '<svg class="is-speel" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.9v10.2a.8.8 0 0 0 1.2.7l8.2-5.1a.8.8 0 0 0 0-1.4L5.7 2.2a.8.8 0 0 0-1.2.7z"/></svg>';
+  knop.addEventListener("click", function () {
+    var gepauzeerd = sectie.classList.toggle("is-gepauzeerd");
+    knop.setAttribute("aria-pressed", String(gepauzeerd));
+    knop.setAttribute("aria-label", gepauzeerd ? "Logo's afspelen" : "Logo's pauzeren");
+  });
+  sectie.appendChild(knop);
 })();
 
 
