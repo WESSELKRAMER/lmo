@@ -6,8 +6,8 @@ Webflow laadt de bestanden via [jsDelivr](https://www.jsdelivr.com), rechtstreek
 
 | Bestand | Wat |
 |---|---|
-| `css/lmo.css` | Vloeiende rem-schaal, logo-marquee, verbergen van elementen tot GSAP ze animeert |
-| `js/lmo.js` | GSAP + ScrollTrigger: animaties via `data-lmo`-attributen |
+| `css/lmo.css` | Font-smoothing, vloeiende rem-schaal, logo-marquee, Lenis-CSS, verbergen van elementen tot GSAP ze animeert |
+| `js/lmo.js` | Lenis smooth scroll op de GSAP-ticker, en animaties via `data-lmo`-attributen |
 | `release.sh` | Tagt een versie en print de code voor Webflow |
 
 ## In Webflow
@@ -16,14 +16,15 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.1.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.2.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.1.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.2.0/js/lmo.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -39,6 +40,14 @@ Geef in de Designer een element een custom attribute (Element settings › Custo
 | `data-lmo-stagger` | De directe kinderen komen na elkaar in beeld (kaarten, lijsten) |
 
 Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zonder JavaScript ook.
+
+## Smooth scroll (Lenis)
+
+Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-motion`.
+
+- Een element dat zelf scrolt (popup, lijst met overflow): attribute `data-lenis-prevent`.
+- Scrollen pauzeren, bijv. bij een open menu: `lmoLenis.stop()` en `lmoLenis.start()`.
+- Naar een plek scrollen: `lmoLenis.scrollTo("#nieuwsbrief")`.
 
 ## Nieuwe versie live zetten
 
