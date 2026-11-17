@@ -854,3 +854,24 @@ button.chip {
 .lmo-menu-open, .lmo-menu-open body { overflow: hidden; }
 .menu-button { cursor: pointer; text-decoration: none; }
 @media (min-width: 992px) { .lmo-menu { display: none !important; } }
+
+/* ---------------------------------------------------------------
+   Optisch centreren van labels in hoofdletters (tags, toetsen).
+   Hoofdletters hebben geen onderstokken, dus de ruimte die het
+   lettertype daarvoor reserveert maakte de onderkant zichtbaar
+   groter. text-box snijdt het tekstvak af van hoofdletterhoogte
+   tot basislijn; de padding is opgehoogd zodat de hoogte gelijk
+   blijft. Oudere browsers houden de oorspronkelijke padding.
+   --------------------------------------------------------------- */
+@supports (text-box: trim-both cap alphabetic) {
+  .tag {
+    text-box: trim-both cap alphabetic;
+    padding-top: 0.6875rem;
+    padding-bottom: 0.6875rem;
+  }
+  .search-key {
+    text-box: trim-both cap alphabetic;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
