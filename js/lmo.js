@@ -23,6 +23,21 @@
 
   document.documentElement.classList.add("lmo-js");
 
+  // Animaties per Webflow-klasse. Werkt hetzelfde als het attribute in de
+  // Designer zetten; handig voor terugkerende onderdelen.
+  var perKlasse = {
+    "fade-up": [".themas-intro", ".gemeenten-blok", ".kerncijfers-intro", ".evenement",
+                ".sectie-kop", ".beeldtekst-inhoud", ".nieuwsbrief-blok"],
+    "fade":    [".beeldtekst-foto"],
+    "stagger": [".themalijst", ".cijfers", ".praktijkkaarten", ".tijdlijn"]
+  };
+  Object.keys(perKlasse).forEach(function (soort) {
+    document.querySelectorAll(perKlasse[soort].join(",")).forEach(function (el) {
+      if (soort === "stagger") el.setAttribute("data-lmo-stagger", "");
+      else if (!el.hasAttribute("data-lmo")) el.setAttribute("data-lmo", soort);
+    });
+  });
+
   function inBeeld(el, vars) {
     return gsap.from(el, Object.assign({
       autoAlpha: 0,

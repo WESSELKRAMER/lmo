@@ -39,6 +39,8 @@ Geef in de Designer een element een custom attribute (Element settings › Custo
 | `data-lmo="fade"` | Alleen invagen |
 | `data-lmo-stagger` | De directe kinderen komen na elkaar in beeld (kaarten, lijsten) |
 
+Terugkerende onderdelen staan per klasse in `perKlasse` bovenin `js/lmo.js`; daar hoeft in Webflow niets voor ingesteld.
+
 Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zonder JavaScript ook.
 
 ## Smooth scroll (Lenis)
@@ -53,10 +55,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.2.0
+./release.sh 0.4.0
 ```
 
-Het script pusht, maakt tag `v0.2.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.4.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
