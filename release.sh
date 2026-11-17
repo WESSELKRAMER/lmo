@@ -19,6 +19,13 @@ git tag "v$versie"
 git push origin "v$versie"
 
 basis="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie"
+
+# jsDelivr onthoudt een 404 als het bestand werd opgevraagd vóór de tag er
+# was. Even wachten en de cache legen voorkomt dat.
+sleep 10
+for f in css/lmo.min.css css/lmo.css js/lmo.min.js js/lmo.js; do
+  curl -s -o /dev/null "https://purge.jsdelivr.net/gh/WESSELKRAMER/lmo@v$versie/$f"
+done
 cat <<EOF
 
 v$versie staat klaar. Zet in Webflow (Site settings › Custom code):
