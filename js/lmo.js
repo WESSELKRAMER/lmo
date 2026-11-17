@@ -172,6 +172,20 @@
 
 
 /* ---------------------------------------------------------------
+   Nav-items: tekst in een rol-span (rolt bij hover omhoog). CSS in lmo.css.
+   --------------------------------------------------------------- */
+(function () {
+  document.querySelectorAll(".nav-link").forEach(function (link) {
+    if (link.querySelector(".nav-rol") || link.children.length) return;
+    var tekst = link.textContent.trim();
+    if (!tekst) return;
+    link.innerHTML = '<span class="nav-rol"><span class="nav-rol-tekst"></span></span>';
+    link.querySelector(".nav-rol-tekst").textContent = tekst;
+  });
+})();
+
+
+/* ---------------------------------------------------------------
    Knoppen: tekst in een rol-span (rolt bij hover omhoog) en een
    tweede pijl die bij hover van links binnenschuift. CSS in lmo.css.
    --------------------------------------------------------------- */
@@ -326,3 +340,149 @@ if (document.readyState === 'loading') {
 } else {
   initDirectionalListHover();
 }
+
+
+/* ---------------------------------------------------------------
+   Gemeenten (homepage) — kaart, chips en kaartje uit het CMS.
+   Webflow: een verborgen collectielijst .gemeenten-data met per item
+   data-attributen (data-gemeente, data-slug, data-azc, data-gemeentelijk,
+   data-amv, data-uitdaging, data-goed-in, data-x, data-y, data-volgorde).
+   Gemeenten met een kaartpositie krijgen een punt en een chip; de rest
+   telt mee in "+ … gemeenten". Zonder CMS-data blijft de statische
+   versie uit Webflow staan.
+   --------------------------------------------------------------- */
+(function () {
+  var blok = document.querySelector(".gemeenten-blok");
+  if (!blok) return;
+  var bron = [].slice.call(blok.querySelectorAll(".gemeenten-data [data-gemeente]"));
+  if (!bron.length) return;
+
+  var getal = function (v) { var n = parseFloat(v); return isNaN(n) ? null : n; };
+  var gemeenten = bron.map(function (el) {
+    var d = el.dataset;
+    return {
+      naam: d.gemeente,
+      slug: d.slug,
+      azc: d.azc || "–",
+      gemeentelijk: d.gemeentelijk || "–",
+      amv: d.amv || "–",
+      uitdaging: d.uitdaging || "",
+      goedIn: d.goedIn || "",
+      x: getal(d.x),
+      y: getal(d.y),
+      volgorde: getal(d.volgorde)
+    };
+  }).sort(function (a, b) {
+    return (a.volgorde == null ? 999 : a.volgorde) - (b.volgorde == null ? 999 : b.volgorde);
+  });
+
+  var opKaart = gemeenten.filter(function (g) { return g.x != null && g.y != null; });
+  var overig = gemeenten.length - opKaart.length;
+  if (!opKaart.length) return;
+
+  var kaart = blok.querySelector(".kaart");
+  var chips = blok.querySelector(".chips");
+  var popup = blok.querySelector(".popup");
+  var punten = {}, chipEls = {};
+
+  // kaartpunten
+  if (kaart) {
+    kaart.querySelectorAll(".kaartpunt").forEach(function (p) { p.remove(); });
+    opKaart.forEach(function (g) {
+      var p = document.createElement("button");
+      p.type = "button";
+      p.className = "kaartpunt";
+      p.style.left = g.x + "%";
+      p.style.top = g.y + "%";
+      p.setAttribute("aria-label", g.naam);
+      p.setAttribute("aria-pressed", "false");
+      p.addEventListener("click", function () { kies(g, true); });
+      kaart.appendChild(p);
+      punten[g.slug] = p;
+    });
+  }
+
+  // chips
+  if (chips) {
+    chips.innerHTML = "";
+    opKaart.forEach(function (g) {
+      var c = document.createElement("button");
+      c.type = "button";
+      c.className = "chip";
+      c.setAttribute("aria-pressed", "false");
+      c.innerHTML = '<span class="chip-punt"></span>';
+      c.appendChild(document.createTextNode(g.naam));
+      c.addEventListener("click", function () { kies(g, true); });
+      chips.appendChild(c);
+      chipEls[g.slug] = c;
+    });
+    if (overig > 0) {
+      var meer = document.createElement("a");
+      meer.className = "chip";
+      meer.href = "#";
+      meer.innerHTML = '<span class="chip-punt is-hol"></span>';
+      meer.appendChild(document.createTextNode("+ " + overig + (overig === 1 ? " gemeente" : " gemeenten")));
+      chips.appendChild(meer);
+    }
+  }
+
+  if (popup) popup.setAttribute("aria-live", "polite");
+
+  var zet = function (sel, tekst) { var el = popup && popup.querySelector(sel); if (el) el.textContent = tekst; };
+
+  function kies(g, animeer) {
+    Object.keys(punten).forEach(function (s) {
+      var aan = s === g.slug;
+      punten[s].classList.toggle("is-actief", aan);
+      punten[s].setAttribute("aria-pressed", String(aan));
+    });
+    Object.keys(chipEls).forEach(function (s) {
+      var aan = s === g.slug;
+      chipEls[s].classList.toggle("is-actief", aan);
+      chipEls[s].setAttribute("aria-pressed", String(aan));
+      var punt = chipEls[s].querySelector(".chip-punt");
+      if (punt) punt.classList.toggle("is-actief", aan);
+    });
+    if (!popup) return;
+
+    var vul = function () {
+      zet(".popup-titel .h3", g.naam);
+      var getallen = popup.querySelectorAll(".opvang-getal");
+      [g.azc, g.gemeentelijk, g.amv].forEach(function (n, i) { if (getallen[i]) getallen[i].textContent = n; });
+      var citaat = popup.querySelector(".popup-citaat");
+      if (citaat) {
+        citaat.textContent = g.uitdaging ? "“" + g.uitdaging + "”" : "";
+        citaat.closest(".popup-blok").hidden = !g.uitdaging;
+      }
+      var tag = popup.querySelector(".popup-blok .tag");
+      if (tag) {
+        tag.textContent = g.goedIn;
+        tag.href = "/zoeken?q=" + encodeURIComponent(g.goedIn);
+        tag.closest(".popup-blok").hidden = !g.goedIn;
+      }
+      var knop = popup.querySelector(".knop");
+      if (knop) {
+        knop.href = "/gemeenten/" + g.slug;
+        var t = knop.querySelector(".knop-rol-tekst") || knop.querySelector(".knop-pil");
+        if (t) t.textContent = "Naar " + g.naam;
+      }
+    };
+
+    var gsap = window.gsap;
+    var stil = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (animeer && gsap && !stil) {
+      var delen = popup.children;
+      gsap.killTweensOf(delen);
+      gsap.to(delen, {
+        autoAlpha: 0, y: "-0.5rem", duration: 0.18, ease: "power1.in", stagger: 0.02,
+        onComplete: function () {
+          vul();
+          gsap.fromTo(delen, { autoAlpha: 0, y: "0.75rem" },
+            { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out", stagger: 0.04, clearProps: "transform,opacity,visibility" });
+        }
+      });
+    } else vul();
+  }
+
+  kies(opKaart[0], false);
+})();

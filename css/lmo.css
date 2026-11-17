@@ -774,3 +774,39 @@ a.zoek-pagina:hover { background-color: var(--_kleuren---zand--200, #e8e3d9); }
   .zoek-resultaat-link > *, .zoek-pijlvak, .zoek-sugg .zoek-pijlvak { transition: none; }
   .zoek-resultaat-link[data-status^="enter"] > :not(.lmo-tegel) { transform: none; }
 }
+
+/* ---------------------------------------------------------------
+   Gemeenten: kaartpunten en chips zijn knoppen (lmo.js)
+   --------------------------------------------------------------- */
+button.kaartpunt { padding: 0; cursor: pointer; }
+button.kaartpunt:focus-visible,
+button.chip:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 3px; }
+button.chip {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+.popup-blok[hidden] { display: none; }
+
+/* ---------------------------------------------------------------
+   Nav-items: tekst rolt omhoog en komt in koraal binnen (lmo.js zet
+   de tekst in .nav-rol). Zelfde beweging als de knoppen.
+   --------------------------------------------------------------- */
+.nav-rol {
+  display: block;
+  overflow: hidden;
+  line-height: 1.25;
+}
+.nav-rol-tekst {
+  display: block;
+  text-shadow: 0 1.5em var(--_kleuren---koraal--700, #a14a22);
+  transition: transform 0.5s var(--lmo-ease);
+}
+.nav-link:hover .nav-rol-tekst,
+.nav-link:focus-visible .nav-rol-tekst { transform: translateY(-1.5em); }
+.nav-link:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 4px; border-radius: 0.25rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-rol-tekst { transition: color 0.2s ease-out; }
+  .nav-link:hover .nav-rol-tekst { transform: none; color: var(--_kleuren---koraal--700, #a14a22); }
+}
