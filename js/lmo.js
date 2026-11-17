@@ -163,6 +163,56 @@
     return function () { getallen.forEach(function (g) { g[0].textContent = g[1]; }); };
   });
 
+  /* Golven (hero-onderkant en footer-bovenkant): één keer een zachte golf
+     door de lijn als hij in beeld komt. Alleen de curvepunten (C) bewegen;
+     de rechte randen blijven staan. De uitslag zwelt aan en dooft uit,
+     dus de vorm eindigt precies zoals hij in Webflow staat. */
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    var golven = gsap.utils.toArray(".hero-golf path, .footer-golf path");
+    var tweens = [];
+    golven.forEach(function (pad) {
+      var origineel = pad.getAttribute("d");
+      var vb = pad.ownerSVGElement && pad.ownerSVGElement.viewBox.baseVal;
+      var breedte = (vb && vb.width) || 1440;
+      var hoogte = (vb && vb.height) || 160;
+      var amplitude = hoogte * 0.045;  // ± 7 van 160: subtiel
+
+      // Splits in stukken: commando's blijven tekst, coördinaten worden getallen.
+      var stukken = origineel.match(/[A-Za-z]|-?\d*\.?\d+(?:e-?\d+)?/g);
+      var buig = function (t) {
+        var omhulling = Math.sin(Math.PI * t);               // 0 → 1 → 0
+        var fase = t * Math.PI * 3;                           // golf loopt van links naar rechts
+        var uit = [], cmd = "", n = 0;
+        for (var i = 0; i < stukken.length; i++) {
+          var st = stukken[i];
+          if (/[A-Za-z]/.test(st)) { cmd = st; n = 0; uit.push(st); continue; }
+          var v = parseFloat(st);
+          if (cmd === "C" && n % 2 === 1) {
+            var x = parseFloat(stukken[i - 1]);
+            v += amplitude * omhulling * Math.sin((x / breedte) * Math.PI * 2.4 - fase);
+          }
+          uit.push(Math.round(v * 100) / 100);
+          n++;
+        }
+        return uit.join(" ");
+      };
+
+      var staat = { t: 0 };
+      var tw = gsap.to(staat, {
+        t: 1,
+        duration: 2.6,
+        ease: "sine.inOut",
+        onUpdate: function () { pad.setAttribute("d", buig(staat.t)); },
+        onComplete: function () { pad.setAttribute("d", origineel); },
+        scrollTrigger: { trigger: pad.closest(".hero-golf, .footer-golf"), start: "top 95%", once: true }
+      });
+      tweens.push([tw, pad, origineel]);
+    });
+    return function () {
+      tweens.forEach(function (x) { x[0].kill(); x[1].setAttribute("d", x[2]); });
+    };
+  });
+
   // ScrollTrigger meet zelf opnieuw bij resize; na het laden van afbeeldingen
   // verschuiven posities nog, dus dan één keer extra meten.
   if (window.ScrollTrigger) {
