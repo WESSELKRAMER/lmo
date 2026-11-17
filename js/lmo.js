@@ -274,6 +274,45 @@
 
 
 /* ---------------------------------------------------------------
+   Download-icoon in de praktijkkaarten (Figma: Praktijkvoorbeeld-kaart
+   › Hover): de pijl zakt de bak in en een nieuwe pijl komt van boven.
+   De pijl komt in een groep met een kopie erboven, afgesneden boven de
+   bak (clipPath 18 × 11,5). CSS in lmo.css.
+   --------------------------------------------------------------- */
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  document.querySelectorAll(".praktijkkaart .download svg").forEach(function (svg, i) {
+    var paden = svg.querySelectorAll("path");
+    if (paden.length !== 2 || svg.querySelector(".download-pijlen")) return;
+    var pijl = paden[1];
+    var id = "lmo-dl-clip-" + i;
+
+    var defs = document.createElementNS(NS, "defs");
+    var clip = document.createElementNS(NS, "clipPath");
+    clip.setAttribute("id", id);
+    var rect = document.createElementNS(NS, "rect");
+    rect.setAttribute("width", "18");
+    rect.setAttribute("height", "11.5");
+    clip.appendChild(rect);
+    defs.appendChild(clip);
+
+    var masker = document.createElementNS(NS, "g");
+    masker.setAttribute("clip-path", "url(#" + id + ")");
+    var groep = document.createElementNS(NS, "g");
+    groep.setAttribute("class", "download-pijlen");
+    var kopie = pijl.cloneNode(true);
+    kopie.setAttribute("transform", "translate(0 -11.5)");
+    groep.appendChild(pijl);
+    groep.appendChild(kopie);
+    masker.appendChild(groep);
+
+    svg.insertBefore(defs, svg.firstChild);
+    svg.appendChild(masker);
+  });
+})();
+
+
+/* ---------------------------------------------------------------
    Lijsten (thema's en nieuws): koppelen aan de Directional List Hover
    hieronder. Webflow-markup blijft zoals hij is; attributen en tegels
    komen hier.

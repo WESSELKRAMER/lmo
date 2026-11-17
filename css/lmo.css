@@ -149,8 +149,12 @@ html.lenis body { height: auto; }
   transition: transform 0.8s var(--lmo-ease);
 }
 .praktijkkaart .download {
-  transition: column-gap 0.4s var(--lmo-ease), color 0.4s var(--lmo-ease);
+  --lmo-dl-ease: cubic-bezier(0.625, 0.05, 0, 1);  /* Figma: smart animate 0,5 s */
+  transition: column-gap 0.5s var(--lmo-dl-ease), color 0.5s var(--lmo-dl-ease);
 }
+.download-pijlen { transition: transform 0.5s var(--lmo-dl-ease, cubic-bezier(0.625, 0.05, 0, 1)); }
+.praktijkkaart:hover .download-pijlen,
+.praktijkkaart:focus-visible .download-pijlen { transform: translateY(11.5px); }  /* svg-eenheden */
 .praktijkkaart:hover { box-shadow: 0 1rem 2.5rem rgba(6, 15, 5, 0.12); }
 .praktijkkaart:hover .praktijkkaart-foto { transform: scale(1.05); }
 .praktijkkaart:hover .download {
@@ -327,12 +331,14 @@ html.lenis body { height: auto; }
   .knop-pijl svg,
   .themarij-pijl,
   .nieuwsitem > *,
-  .praktijkkaart-foto { transition: none; }
+  .praktijkkaart-foto,
+  .download-pijlen { transition: none; }
   .knop:hover .knop-rol-tekst,
   .knop:hover .knop-pijl svg,
   .themarij[data-status^="enter"] .themarij-pijl,
   .nieuwsitem[data-status^="enter"] > :not(.lmo-tegel),
-  .praktijkkaart:hover .praktijkkaart-foto { transform: none; }
+  .praktijkkaart:hover .praktijkkaart-foto,
+  .praktijkkaart:hover .download-pijlen { transform: none; }
   .knop .knop-pijl-in { display: none; }
 }
 

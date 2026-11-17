@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.2/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.3/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,8 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.2/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.2/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.3/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.3/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -51,7 +51,7 @@ Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zond
 | Onderdeel | Effect |
 |---|---|
 | Themalijst (`.themarij`) en nieuws (`.nieuwsitem`) | Directional List Hover van Osmo Supply: een donkerbeige tegel (Zand/200) schuift in vanaf de kant waar de muis binnenkomt |
-| Praktijkkaarten | Zachte schaduw, foto zoomt iets in, download-regel schuift op |
+| Praktijkkaarten | Zachte schaduw, foto zoomt iets in, download-regel schuift op; de pijl in het download-icoon zakt de bak in en een nieuwe komt van boven |
 | Tekstlinks | Pijl wisselt van rechts naar links |
 | Footerlinks | Koraal onderlijn groeit |
 | Tags, gemeente-chips, zoekveld | Kleurwissels en focusring uit Figma |
