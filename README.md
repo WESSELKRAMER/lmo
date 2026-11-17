@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.1/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.2/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,8 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.1/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.1/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.2/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.7.2/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -63,9 +63,9 @@ De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de
 ## Animaties uit Figma
 
 - **Hero-vormen**: elke 2,5 s schuiven de vier vormen één vak met de klok mee en draaien 90° (0,9 s, ease in-out). Loopt alleen als de hero in beeld is.
-- **Logo-marquee**: 4 s per logo, met pauzeknop.
+- **Logo-marquee**: 4 s per logo; pauzeert bij hover en toetsenbordfocus.
 - **Kerncijfers**: tellen op vanaf 0 als ze in beeld komen.
-- **Golven** (onder de hero, boven de footer): één keer een zachte golf door de lijn als ze in beeld komen (2,6 s); daarna staat de vorm weer precies zoals in Webflow.
+- **Golven** (onder de hero, boven de footer): één keer een zachte golf over de hele lijn als ze in beeld komen (2,6 s); daarna staat de vorm weer precies zoals in Webflow.
 
 ## Gemeenten (CMS)
 

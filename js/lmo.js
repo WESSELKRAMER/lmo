@@ -180,16 +180,26 @@
       // Splits in stukken: commando's blijven tekst, coördinaten worden getallen.
       var stukken = origineel.match(/[A-Za-z]|-?\d*\.?\d+(?:e-?\d+)?/g);
       var buig = function (t) {
-        var omhulling = Math.sin(Math.PI * t);               // 0 → 1 → 0
-        var fase = t * Math.PI * 3;                           // golf loopt van links naar rechts
-        var uit = [], cmd = "", n = 0;
+        var omhulling = Math.sin(Math.PI * t);                // 0 → 1 → 0
+        var fase = t * Math.PI * 2;                            // één lange golf schuift van links naar rechts
+        var verschuif = function (x) {
+          return amplitude * omhulling * Math.sin((x / breedte) * Math.PI * 2 - fase);
+        };
+        // Elk punt van de lijn beweegt mee (ankers én handvatten, ook het
+        // begin- en eindpunt), zodat de golf één doorlopend geheel blijft.
+        // Alleen de onderrand (V tot onderaan, H) blijft staan.
+        var uit = [], cmd = "", n = 0, x = 0;
         for (var i = 0; i < stukken.length; i++) {
           var st = stukken[i];
-          if (/[A-Za-z]/.test(st)) { cmd = st; n = 0; uit.push(st); continue; }
+          if (/[A-Za-z]/.test(st)) { cmd = st.toUpperCase(); n = 0; uit.push(st); continue; }
           var v = parseFloat(st);
-          if (cmd === "C" && n % 2 === 1) {
-            var x = parseFloat(stukken[i - 1]);
-            v += amplitude * omhulling * Math.sin((x / breedte) * Math.PI * 2.4 - fase);
+          if (cmd === "M" || cmd === "C" || cmd === "L") {
+            if (n % 2 === 0) x = v;
+            else v += verschuif(x);
+          } else if (cmd === "H") {
+            x = v;
+          } else if (cmd === "V") {
+            if (v < hoogte * 0.98) v += verschuif(x);
           }
           uit.push(Math.round(v * 100) / 100);
           n++;
@@ -301,31 +311,6 @@
     link.insertBefore(voor, link.firstChild);
   });
 })();
-
-
-/* ---------------------------------------------------------------
-   Logo-marquee: pauzeknop (Figma: "bouw op de site een pauzeknop in").
-   --------------------------------------------------------------- */
-(function () {
-  var sectie = document.querySelector(".logos");
-  if (!sectie || sectie.querySelector(".logos-pauze")) return;
-  var knop = document.createElement("button");
-  knop.type = "button";
-  knop.className = "logos-pauze";
-  knop.setAttribute("aria-pressed", "false");
-  knop.setAttribute("aria-label", "Logo's pauzeren");
-  knop.innerHTML =
-    '<svg class="is-pauze" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="3.5" y="2.5" width="3" height="11" rx="1"/><rect x="9.5" y="2.5" width="3" height="11" rx="1"/></svg>' +
-    '<svg class="is-speel" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.9v10.2a.8.8 0 0 0 1.2.7l8.2-5.1a.8.8 0 0 0 0-1.4L5.7 2.2a.8.8 0 0 0-1.2.7z"/></svg>';
-  knop.addEventListener("click", function () {
-    var gepauzeerd = sectie.classList.toggle("is-gepauzeerd");
-    knop.setAttribute("aria-pressed", String(gepauzeerd));
-    knop.setAttribute("aria-label", gepauzeerd ? "Logo's afspelen" : "Logo's pauzeren");
-  });
-  sectie.appendChild(knop);
-})();
-
-
 /* ---------------------------------------------------------------
    Directional List Hover — Osmo Supply (ongewijzigd overgenomen)
    --------------------------------------------------------------- */
