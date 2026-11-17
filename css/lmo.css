@@ -195,15 +195,29 @@ html.lenis body { height: auto; }
    --------------------------------------------------------------- */
 .footer-link,
 .footer-link-small {
-  background-image: linear-gradient(var(--_kleuren---koraal--400, #f6946b), var(--_kleuren---koraal--400, #f6946b));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0% 2px;
-  padding-bottom: 0.3125rem;
-  transition: background-size 0.4s var(--lmo-ease), color 0.25s ease-out;
+  position: relative;
+  transition: color 0.25s ease-out;
 }
-.footer-link:hover,
-.footer-link-small:hover { background-size: 100% 2px; }
+/* Onderlijn als losse laag onder de tekst: neemt geen ruimte in, dus de
+   tekst lijnt gewoon uit met tekst ernaast. */
+.footer-link::after,
+.footer-link-small::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.3125rem;
+  height: 2px;
+  background-color: var(--_kleuren---koraal--400, #f6946b);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--lmo-ease);
+  pointer-events: none;
+}
+.footer-link:hover::after,
+.footer-link-small:hover::after,
+.footer-link:focus-visible::after,
+.footer-link-small:focus-visible::after { transform: scaleX(1); }
 
 /* ---------------------------------------------------------------
    Tags en gemeente-chips — Figma: Tag › Hover, Gemeente-chip › Hover
@@ -753,7 +767,8 @@ a.search-page-link:hover { background-color: var(--_kleuren---zand--200, #e8e3d9
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .search-result-link > *, .search-arrow-box, .search-suggestion .search-arrow-box { transition: none; }
+  .search-result-link > *, .search-arrow-box, .search-suggestion .search-arrow-box,
+  .footer-link::after, .footer-link-small::after { transition: none; }
   .search-result-link[data-status^="enter"] > :not(.lmo-tile) { transform: none; }
 }
 
