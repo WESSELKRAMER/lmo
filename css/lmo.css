@@ -811,8 +811,11 @@ button.chip {
   display: flex;
   flex-direction: column;
   row-gap: 1.75rem;
+  width: 100%;
+  max-width: 36rem;
   padding: 6.5625rem 1.25rem 2.5rem;
 }
+@media (min-width: 768px) { .lmo-menu-binnen { padding: 8rem 2rem 3rem; } }
 .lmo-menu-zoek .zoekveld { height: 3.25rem; }
 .lmo-menu-zoek .zoekinvoer { font-size: 1rem; }
 
@@ -850,4 +853,4 @@ button.chip {
 .lmo-menu-open .nav .zoekknop { display: none; }
 .lmo-menu-open, .lmo-menu-open body { overflow: hidden; }
 .menuknop { cursor: pointer; text-decoration: none; }
-@media (min-width: 768px) { .lmo-menu { display: none !important; } }
+@media (min-width: 992px) { .lmo-menu { display: none !important; } }

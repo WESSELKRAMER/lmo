@@ -702,5 +702,5 @@ if (document.readyState === 'loading') {
   });
 
   // Naar desktopbreedte: menu dicht.
-  window.matchMedia("(min-width: 768px)").addEventListener("change", function (m) { if (m.matches) sluit(false); });
+  window.matchMedia("(min-width: 992px)").addEventListener("change", function (m) { if (m.matches) sluit(false); });
 })();
