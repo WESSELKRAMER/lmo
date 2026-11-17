@@ -1,0 +1,49 @@
+/* Leernetwerk Menswaardige Opvang — custom CSS bovenop Webflow.
+   Geladen in Site settings › Custom code › Head via jsDelivr (zie README). */
+
+/* ---------------------------------------------------------------
+   Vloeiende schaal
+   Alle maten in Webflow staan in rem. Door de root mee te laten
+   schalen met de viewport schaalt alles (tekst, ruimte, beeld) mee.
+   1rem = 16px op 1440px (desktop) en op 390px (mobiel).
+   Tablet (768–991px) blijft vast op 16px.
+   --------------------------------------------------------------- */
+html { font-size: 16px; }
+
+@media (min-width: 992px) {
+  html { font-size: clamp(14px, 1.1111vw, 18px); }
+}
+
+@media (max-width: 767px) {
+  html { font-size: clamp(14px, 4.1026vw, 17px); }
+}
+
+/* ---------------------------------------------------------------
+   Logo-marquee (sectie "logos")
+   .logos-spoor bevat de logo's twee keer achter elkaar; -50% schuift
+   precies één set op, zodat de loop naadloos is.
+   --------------------------------------------------------------- */
+@keyframes lmo-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.logos-spoor { animation: lmo-marquee 45s linear infinite; }
+
+.logos-venster:hover .logos-spoor,
+.logos-venster:focus-within .logos-spoor { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .logos-spoor { animation: none; }
+}
+
+/* ---------------------------------------------------------------
+   GSAP: voorkom een flits van de eindstand vóór de animatie start.
+   lmo.js zet .lmo-js op <html> zodra het script draait; zonder JS
+   blijft alles gewoon zichtbaar.
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .lmo-js [data-lmo="fade-up"],
+  .lmo-js [data-lmo="fade"],
+  .lmo-js [data-lmo-stagger] > * { visibility: hidden; }
+}

@@ -1,0 +1,69 @@
+# LMO — custom code voor Webflow
+
+Custom CSS en GSAP-animaties voor de site van het Leernetwerk Menswaardige Opvang
+([leernetwerk-menswaardige-opvang.webflow.io](https://leernetwerk-menswaardige-opvang.webflow.io)).
+Webflow laadt de bestanden via [jsDelivr](https://www.jsdelivr.com), rechtstreeks uit deze repo.
+
+| Bestand | Wat |
+|---|---|
+| `css/lmo.css` | Vloeiende rem-schaal, logo-marquee, verbergen van elementen tot GSAP ze animeert |
+| `js/lmo.js` | GSAP + ScrollTrigger: animaties via `data-lmo`-attributen |
+| `release.sh` | Tagt een versie en print de code voor Webflow |
+
+## In Webflow
+
+Site settings › Custom code:
+
+**Head**
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.1.0/css/lmo.min.css">
+```
+
+**Footer** (voor `</body>`)
+```html
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.1.0/js/lmo.min.js"></script>
+```
+
+jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
+
+## Animaties toevoegen
+
+Geef in de Designer een element een custom attribute (Element settings › Custom attributes):
+
+| Attribute | Effect |
+|---|---|
+| `data-lmo="fade-up"` | Schuift omhoog en vervaagt in als het in beeld komt |
+| `data-lmo="fade"` | Alleen invagen |
+| `data-lmo-stagger` | De directe kinderen komen na elkaar in beeld (kaarten, lijsten) |
+
+Bij `prefers-reduced-motion` gebeurt er niets en is alles meteen zichtbaar. Zonder JavaScript ook.
+
+## Nieuwe versie live zetten
+
+```bash
+git commit -am "Wat er veranderd is"
+./release.sh 0.2.0
+```
+
+Het script pusht, maakt tag `v0.2.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+
+**Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
+komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow
+terug naar een vorige versie door alleen het nummer te veranderen.
+
+Even snel testen zonder nieuwe tag kan met een commit-hash:
+`https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@<hash>/js/lmo.js`.
+
+## Schaal
+
+Alle maten in Webflow staan in rem. `lmo.css` laat de root meeschalen:
+
+| Viewport | 1rem |
+|---|---|
+| ≥ 992px | `clamp(14px, 1.1111vw, 18px)` — 16px op 1440 |
+| 768–991px | 16px |
+| ≤ 767px | `clamp(14px, 4.1026vw, 17px)` — 16px op 390 |
+
+De maximale breedte van de inhoud is de Webflow-variabele *Ruimte/Max breedte* (120rem).
