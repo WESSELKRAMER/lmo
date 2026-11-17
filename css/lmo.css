@@ -584,7 +584,7 @@ html.lenis body { height: auto; }
 .zoek-tags .tag { text-decoration: none; }
 
 /* Nav-knop: zoeken ↔ sluiten */
-.zoekknop { position: relative; }
+.zoekknop { position: relative; text-decoration: none; }
 .zoekknop-sluit { display: none; align-items: center; justify-content: center; gap: 0.5rem; }
 .zoekknop-sluit-tekst { display: none; }
 .lmo-zoek-open .zoekknop > svg { display: none; }

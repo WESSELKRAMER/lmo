@@ -122,14 +122,18 @@
     ];
     var totaal = 0;
     for (var i = 0; i < ts.length; i++) {
-      var best = 0;
+      // Per veld de beste treffer; treffers in meer velden tellen op.
+      var term = 0;
       velden.forEach(function (v) {
+        var best = 0;
         treffers(v[0] || "", ts[i]).forEach(function (m) {
           best = Math.max(best, v[1] * (m.begin ? 1 : 0.35));
         });
+        term += best;
       });
-      if (!best) return 0;  // alle termen moeten ergens voorkomen
-      totaal += best;
+      if (!term) return 0;  // alle termen moeten ergens voorkomen
+      if (vouw(item.titel).indexOf(ts[i]) === 0) term += 3;  // titel begint ermee
+      totaal += term;
     }
     return totaal;
   }
@@ -410,11 +414,12 @@
       trigger.setAttribute("aria-label", "Zoeken");
     }
     if (window.lmoLenis) window.lmoLenis.start();
-    var klaar = function () { overlay.hidden = true; };
+    var klaar = function () { if (!open) overlay.hidden = true; };
     var gsap = window.gsap;
     if (gsap && !bewegingUit.matches) {
       gsap.to(overlay.querySelector(".zoek-scrim"), { autoAlpha: 0, duration: 0.25 });
       gsap.to(paneel, { yPercent: -100, duration: 0.4, ease: "power3.in", onComplete: klaar });
+      setTimeout(klaar, 500);  // ook als de animatie niet afloopt (bijv. tab op de achtergrond)
     } else klaar();
     var terug = trigger || laatsteFocus;
     if (terug && terug.focus) terug.focus();
