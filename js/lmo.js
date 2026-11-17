@@ -223,6 +223,83 @@
     };
   });
 
+  /* Laatste nieuws: een afbeelding volgt de muis over de lijst (zoals op
+     dennissnellenberg.com/work). De afbeelding schuift verticaal naar de
+     foto van het item waar je op staat; een koraal rondje "Lees" volgt
+     iets sneller. Alleen met een muis op desktop.
+     Foto per item: data-image op .news-item (later uit het CMS);
+     zonder data-image vallen we terug op de foto's van de site. */
+  mm.add("(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) and (min-width: 992px)", function () {
+    var lijst = document.querySelector(".timeline");
+    var items = lijst ? [].slice.call(lijst.querySelectorAll(".news-item")) : [];
+    if (!items.length) return;
+
+    var reserve = [].slice.call(document.querySelectorAll(".practice-card-photo, .image-text-photo"))
+      .map(function (img) { return img.currentSrc || img.src; })
+      .filter(function (src, i, a) { return src && a.indexOf(src) === i; });
+    var fotos = items.map(function (it, i) {
+      return it.getAttribute("data-image") || reserve[i % Math.max(reserve.length, 1)] || "";
+    });
+    if (!fotos.some(Boolean)) return;
+
+    var beeld = document.createElement("div");
+    beeld.className = "news-preview";
+    beeld.setAttribute("aria-hidden", "true");
+    beeld.innerHTML = '<div class="news-preview-track" style="height:' + (items.length * 100) + '%">' +
+      fotos.map(function (src) {
+        return '<div class="news-preview-slide" style="height:' + (100 / items.length) + '%">' +
+          (src ? '<img src="' + src + '" alt="" loading="lazy">' : "") + "</div>";
+      }).join("") + "</div>";
+    var rondje = document.createElement("div");
+    rondje.className = "news-preview-cursor";
+    rondje.setAttribute("aria-hidden", "true");
+    rondje.innerHTML = "<span>Lees</span>";
+    document.body.appendChild(beeld);
+    document.body.appendChild(rondje);
+    var spoor = beeld.firstChild;
+
+    gsap.set([beeld, rondje], { xPercent: -50, yPercent: -50, scale: 0 });
+    var bx = gsap.quickTo(beeld, "x", { duration: 0.8, ease: "power3" });
+    var by = gsap.quickTo(beeld, "y", { duration: 0.8, ease: "power3" });
+    var rx = gsap.quickTo(rondje, "x", { duration: 0.45, ease: "power3" });
+    var ry = gsap.quickTo(rondje, "y", { duration: 0.45, ease: "power3" });
+
+    var binnen = false;
+    var volg = function (e) { bx(e.clientX); by(e.clientY); rx(e.clientX); ry(e.clientY); };
+    var naar = function (i) {
+      gsap.to(spoor, { yPercent: -(100 / items.length) * i, duration: 0.6, ease: "power3.inOut", overwrite: true });
+    };
+
+    var binnenkomen = function (e) {
+      binnen = true;
+      gsap.set([beeld, rondje], { x: e.clientX, y: e.clientY });
+      gsap.to(beeld, { scale: 1, duration: 0.45, ease: "power3.out", overwrite: "auto" });
+      gsap.to(rondje, { scale: 1, duration: 0.45, ease: "power3.out", delay: 0.05, overwrite: "auto" });
+    };
+    var weggaan = function () {
+      binnen = false;
+      gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in", overwrite: "auto" });
+    };
+
+    lijst.addEventListener("mouseenter", binnenkomen);
+    lijst.addEventListener("mouseleave", weggaan);
+    window.addEventListener("mousemove", volg);
+    var luisteraars = items.map(function (it, i) {
+      var f = function () { naar(i); };
+      it.addEventListener("mouseenter", f);
+      return f;
+    });
+
+    return function () {
+      lijst.removeEventListener("mouseenter", binnenkomen);
+      lijst.removeEventListener("mouseleave", weggaan);
+      window.removeEventListener("mousemove", volg);
+      items.forEach(function (it, i) { it.removeEventListener("mouseenter", luisteraars[i]); });
+      beeld.remove();
+      rondje.remove();
+    };
+  });
+
   // ScrollTrigger meet zelf opnieuw bij resize; na het laden van afbeeldingen
   // verschuiven posities nog, dus dan één keer extra meten.
   if (window.ScrollTrigger) {

@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.9.2/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.10.0/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,8 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.9.2/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.9.2/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.10.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.10.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -92,6 +92,10 @@ De Menu-knop in de nav (mobiel en tablet) opent een donkergroen paneel volgens F
 - **Resultatenpagina** `/zoeken?q=…`: in Webflow staan alleen de kop en een leeg blok met `data-lmo-zoekresultaten`; `zoeken.js` vult zoekbalk, filters per soort, sorteren, resultaten (8 per pagina) en paginering. De h1 met `data-lmo-zoektitel` krijgt "24 resultaten voor …".
 - **Index**: `data/zoekindex.json`. Per item: `soort` (praktijkvoorbeeld, nieuws, kennisbank, agenda), `titel`, `samenvatting`, `gemeente`, `datum`, `formaat`, `beeld`, `trefwoorden`, `url`. `zoektermen` voeden de suggesties, `veelGezocht` de tags. Zodra er een CMS is, kan dit bestand daaruit gegenereerd worden.
 
+## Nieuws: afbeelding volgt de muis
+
+Over de lijst Laatste nieuws volgt een afbeelding (22×16rem) de muis met wat vertraging, plus een koraal rondje "Lees". Per item schuift de afbeelding naar de foto van dat item. Foto per item: `data-image="<url>"` op `.news-item` (later koppelen aan het beeldveld in het CMS); zonder `data-image` gebruikt het script voorlopig de foto's van de site. Alleen met een muis op desktop; niet bij touch, tablet of "minder beweging".
+
 ## Smooth scroll (Lenis)
 
 Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-motion`.
@@ -104,10 +108,10 @@ Staat aan voor muis en trackpad; touch scrolt native. Uit bij `prefers-reduced-m
 
 ```bash
 git commit -am "Wat er veranderd is"
-./release.sh 0.10.0
+./release.sh 0.11.0
 ```
 
-Het script pusht, maakt tag `v0.10.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
+Het script pusht, maakt tag `v0.11.0` en print de nieuwe links. Zet die in Webflow en publiceer opnieuw.
 
 **Waarom een tag en niet `@main`?** jsDelivr bewaart `@main` tot 12 uur in de cache, dus wijzigingen
 komen dan pas later door. Een tag is direct beschikbaar en verandert nooit, en je kunt in Webflow

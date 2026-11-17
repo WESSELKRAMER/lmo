@@ -890,3 +890,43 @@ button.chip {
     padding-bottom: 0.5rem;
   }
 }
+
+/* ---------------------------------------------------------------
+   Laatste nieuws: afbeelding die de muis volgt (lmo.js)
+   --------------------------------------------------------------- */
+.news-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 50;
+  width: 22rem;
+  height: 16rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background-color: var(--_kleuren---zand--200, #e8e3d9);
+  box-shadow: 0 1.5rem 3rem rgba(6, 15, 5, 0.14);
+  pointer-events: none;
+  will-change: transform;
+}
+.news-preview-track { width: 100%; }
+.news-preview-slide { width: 100%; overflow: hidden; }
+.news-preview-slide img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.news-preview-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 51;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background-color: var(--_kleuren---koraal--500, #f28658);
+  color: var(--_kleuren---groen--950, #060f05);
+  font-size: 1rem;
+  font-weight: 500;
+  pointer-events: none;
+  will-change: transform;
+}
