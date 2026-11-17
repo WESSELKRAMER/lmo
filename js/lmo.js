@@ -642,6 +642,17 @@ if (document.readyState === 'loading') {
     else knop.textContent = dicht ? tekst : "Sluiten";
   }
 
+  // Vorm van de Menu-knop als clip-path: het paneel groeit daaruit en
+  // krimpt er weer in terug.
+  function knopVorm() {
+    var r = knop.getBoundingClientRect();
+    var rond = parseFloat(getComputedStyle(knop).borderTopLeftRadius) || r.height / 2;
+    rond = Math.min(rond, r.height / 2);
+    return "inset(" + r.top + "px " + (window.innerWidth - r.right) + "px " +
+      (window.innerHeight - r.bottom) + "px " + r.left + "px round " + rond + "px)";
+  }
+  var VOL = "inset(0px 0px 0px 0px round 0px)";
+
   function openMenu() {
     if (open) return;
     open = true;
@@ -651,10 +662,11 @@ if (document.readyState === 'loading') {
     zetKnop(false);
     if (window.lmoLenis) window.lmoLenis.stop();
     if (gsap && !stil.matches) {
-      gsap.fromTo(paneel, { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 0.6, ease: "expo.out" });
+      gsap.killTweensOf(paneel);
+      gsap.fromTo(paneel, { clipPath: knopVorm() }, { clipPath: VOL, duration: 0.7, ease: "power3.inOut", clearProps: "clipPath" });
       gsap.fromTo(paneel.querySelectorAll(".lmo-menu-zoek, .lmo-menu-lijst li, .lmo-menu-acties > *"),
         { autoAlpha: 0, y: "1rem" },
-        { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035, delay: 0.1, clearProps: "transform,opacity,visibility" });
+        { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035, delay: 0.35, clearProps: "transform,opacity,visibility" });
     }
   }
 
@@ -667,8 +679,17 @@ if (document.readyState === 'loading') {
     if (window.lmoLenis) window.lmoLenis.start();
     var klaar = function () { if (!open) paneel.hidden = true; };
     if (gsap && !stil.matches) {
-      gsap.to(paneel, { clipPath: "inset(0 0 100% 0)", duration: 0.4, ease: "power3.in", onComplete: klaar });
-      setTimeout(klaar, 500);
+      gsap.killTweensOf(paneel);
+      gsap.to(paneel.querySelectorAll(".lmo-menu-binnen > *"), { autoAlpha: 0, duration: 0.15, ease: "power1.in" });
+      gsap.fromTo(paneel, { clipPath: VOL }, {
+        clipPath: knopVorm(), duration: 0.55, ease: "power3.inOut", delay: 0.05,
+        onComplete: function () {
+          klaar();
+          gsap.set(paneel, { clearProps: "clipPath" });
+          gsap.set(paneel.querySelectorAll(".lmo-menu-binnen > *"), { clearProps: "opacity,visibility" });
+        }
+      });
+      setTimeout(klaar, 800);
     } else klaar();
     if (terugFocus) knop.focus();
   }

@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.2/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.3/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,8 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.2/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.2/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.3/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.8.3/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -80,7 +80,7 @@ Klik op een punt of chip wisselt het kaartje. De gemeente met de laagste volgord
 
 ## Mobiel menu
 
-De Menu-knop in de nav (mobiel) opent een donkergroen paneel volgens Figma: zoekveld, de nav-links genummerd 01–07, de knop "Schrijf je in voor de nieuwsbrief" en het e-mailadres uit de footer. De links komen uit `.nav-menu` in de Nav-component. Esc of "Sluiten" sluit het menu; een link kiezen ook.
+De Menu-knop in de nav (mobiel en tablet) opent een donkergroen paneel volgens Figma, dat uit de knop zelf groeit en er bij sluiten weer in terugkrimpt: zoekveld, de nav-links genummerd 01–07, de knop "Schrijf je in voor de nieuwsbrief" en het e-mailadres uit de footer. De links komen uit `.nav-menu` in de Nav-component. Esc of "Sluiten" sluit het menu; een link kiezen ook.
 
 ## Zoeken
 
