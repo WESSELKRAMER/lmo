@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.1/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.2/css/lmo.min.css">
 ```
 
 **Footer** (voor `</body>`)
@@ -26,8 +26,8 @@ Site settings › Custom code:
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.1/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.1/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.2/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.6.2/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.

@@ -623,6 +623,7 @@
 
       // kop
       var kop = !staat.q ? "Zoeken"
+        : !alle.length ? "Geen resultaten voor “" + staat.q + "”"
         : alle.length === 1 ? "1 resultaat voor “" + staat.q + "”"
         : alle.length + " resultaten voor “" + staat.q + "”";
       if (titelEl) titelEl.textContent = kop;
