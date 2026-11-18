@@ -1154,3 +1154,151 @@ if (document.readyState === 'loading') {
     });
   });
 })();
+
+
+/* ---------------------------------------------------------------
+   List/Grid Toggle (Flip) — Osmo Supply (/components 31).
+   De functie hieronder is ongewijzigd van Osmo overgenomen. Nodig:
+   GSAP Flip (in Webflow: Site settings › GSAP › Flip aan, of het
+   script in de footer vóór lmo.js).
+   Webflow maakt van een <button> een link zonder href; het blokje
+   "lmoListGridKnoppen" maakt die weer bedienbaar met het toetsenbord.
+   --------------------------------------------------------------- */
+function initListGridToggle() {
+  gsap.registerPlugin(Flip);
+
+  let reduceMotion = false;
+
+  gsap.matchMedia().add("(prefers-reduced-motion: reduce)", () => {
+    reduceMotion = true;
+
+    return () => {
+      reduceMotion = false;
+    };
+  });
+
+  const cornerRadius = (el) => parseFloat(getComputedStyle(el).borderTopLeftRadius);
+
+  document.querySelectorAll("[data-list-grid-init]").forEach((root) => {
+    const toggles = root.querySelectorAll("[data-list-grid-toggle]");
+    const shownIn = (el, view) => ["", view].includes(el.getAttribute("data-list-grid-fade"));
+    let flip;
+
+    function setView(view) {
+      root.setAttribute("data-list-grid-view", view);
+
+      toggles.forEach((toggle) => {
+        toggle.setAttribute("aria-pressed", String(toggle.getAttribute("data-list-grid-toggle") === view));
+      });
+    }
+
+    const startView = root.getAttribute("data-list-grid-view") || "list";
+    setView(startView);
+
+    gsap.set([...root.querySelectorAll("[data-list-grid-fade]")].filter((el) => !shownIn(el, startView)), {
+      autoAlpha: 0,
+    });
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", () => {
+        const view = toggle.getAttribute("data-list-grid-toggle");
+        if (view === root.getAttribute("data-list-grid-view")) return;
+
+        const fadeTargets = [...root.querySelectorAll("[data-list-grid-fade]")];
+        const flipElements = [...root.querySelectorAll("[data-list-grid-flip]")];
+        const fadeIn = fadeTargets.filter((el) => shownIn(el, view));
+
+        flip?.kill();
+        gsap.killTweensOf(fadeTargets, "opacity,visibility");
+        gsap.killTweensOf(flipElements);
+
+        const opacities = fadeTargets.map((el) => gsap.getProperty(el, "opacity"));
+        const startRadii = flipElements.map((el) => cornerRadius(el) * gsap.getProperty(el, "scaleX"));
+        const state = Flip.getState([...flipElements, ...fadeTargets]);
+
+        gsap.set(fadeTargets, {
+          autoAlpha: (index) => opacities[index],
+        });
+
+        gsap.set(flipElements, {
+          clearProps: "borderRadius",
+        });
+
+        setView(view);
+
+        if (reduceMotion) {
+          gsap.set(fadeTargets, {
+            autoAlpha: (index, el) => (fadeIn.includes(el) ? 1 : 0),
+          });
+
+          return;
+        }
+
+        const endRadii = flipElements.map(cornerRadius);
+
+        flip = Flip.from(state, {
+          duration: 0.8,
+          ease: "expo.inOut",
+          scale: true,
+          onComplete() {
+            gsap.set(fadeTargets.filter((el) => !fadeIn.includes(el)), {
+              autoAlpha: 0,
+            });
+          },
+        });
+
+        flipElements.forEach((el, index) => {
+          gsap.fromTo(el, {
+            borderRadius: startRadii[index] / gsap.getProperty(el, "scaleX"),
+          }, {
+            borderRadius: endRadii[index],
+            duration: 0.8,
+            ease: "expo.inOut",
+            clearProps: "borderRadius",
+          });
+        });
+
+        const tl = gsap.timeline();
+
+        tl.to(fadeTargets, {
+          autoAlpha: 0,
+          duration: 0.2,
+          ease: "power1.out",
+        }).to(fadeIn, {
+          autoAlpha: 1,
+          duration: 0.3,
+          ease: "power1.out",
+          stagger: {
+            amount: 0.2,
+          },
+        }, 0.55);
+      });
+    });
+  });
+}
+
+(function () {
+  // Toggle-knoppen die Webflow als <a> zonder href rendert: knop-rol,
+  // focusbaar, Enter/Spatie klikt, en geen sprong naar boven.
+  function lmoListGridKnoppen() {
+    document.querySelectorAll("[data-list-grid-toggle]").forEach(function (k) {
+      if (k.tagName === "BUTTON") return;
+      k.setAttribute("role", "button");
+      k.setAttribute("tabindex", "0");
+      k.removeAttribute("type");
+      k.addEventListener("click", function (e) { e.preventDefault(); });
+      k.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); k.click(); }
+      });
+    });
+  }
+  function start() {
+    if (!document.querySelector("[data-list-grid-init]")) return;
+    lmoListGridKnoppen();
+    if (!window.gsap || !window.Flip) { console.warn("[lmo] GSAP Flip niet geladen: list/grid-toggle staat uit"); return; }
+    initListGridToggle();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else if (window.gsap) start();
+  else window.addEventListener("load", start);
+})();

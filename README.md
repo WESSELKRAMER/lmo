@@ -18,16 +18,17 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.13.2/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.14.0/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
 
 **Footer** (voor `</body>`)
 ```html
+<script src="https://cdn.prod.website-files.com/gsap/3.15.0/Flip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.13.2/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.13.2/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.14.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.14.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -135,6 +136,7 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 | 28 | Checklist in twee kolommen op donkergroen | `check-grid`, `check-row` |
 | 29 | Video-poster met afspeelknop (link naar video) | `video-poster`, `video-play` |
 | 30 | Lees ook, lijst met thumbnails | `related-list`, `related-item` |
+| 31 | List/Grid Toggle (Flip) van Osmo Supply: wissel tussen lijst en raster; foto's glijden naar hun nieuwe plek. Data-attributen niet hernoemen. Nodig: GSAP Flip | `list-grid`, `list-grid__toggle`, `list-grid__item`, `[data-list-grid-*]` |
 
 De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBouwstenen` in `lmo.js`).
 

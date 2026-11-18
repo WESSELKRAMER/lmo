@@ -42,6 +42,7 @@ Head:
 <link rel="stylesheet" href="$basis/css/lmo.min.css">
 
 Footer:
+<script src="https://cdn.prod.website-files.com/gsap/3.15.0/Flip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
 <script src="$basis/js/lmo.min.js"></script>
 <script src="$basis/js/zoeken.min.js"></script>

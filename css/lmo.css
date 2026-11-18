@@ -1062,3 +1062,39 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
 @media (min-width: 992px) and (prefers-reduced-motion: no-preference) {
   .lmo-js .h-scroll-viewport { overflow: visible; }
 }
+
+/* ---------------------------------------------------------------
+   List/Grid Toggle (Osmo Supply, /components 31). De basisstijl staat
+   in Webflow; hier alleen wat Webflow niet kan: de rasterweergave
+   via [data-list-grid-view="grid"] en de actieve knop.
+   --------------------------------------------------------------- */
+.list-grid__button[aria-pressed="true"] { color: var(--_kleuren---neutraal--wit, #fff); }
+.list-grid__button:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: -0.125rem; border-radius: 2rem; }
+.list-grid__link:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 0.25rem; }
+[data-list-grid-view="grid"] .list-grid__indicator { left: 50%; }
+[data-list-grid-view="grid"] .list-grid__list {
+  grid-template-columns: repeat(var(--list-grid-columns), minmax(0, 1fr));
+  row-gap: 3rem;
+}
+[data-list-grid-view="grid"] .list-grid__link {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "media media media" "title category year";
+  column-gap: 0.375rem;
+  row-gap: 1rem;
+  padding-bottom: 0;
+}
+[data-list-grid-view="grid"] .list-grid__line { grid-area: media; align-self: end; }
+[data-list-grid-view="grid"] .list-grid__media { border-radius: 1rem; }
+.list-grid__link:hover .list-grid__image { transform: scale(1.04); }
+.list-grid__image { transition: transform 0.7s var(--lmo-ease, ease); }
+@media (max-width: 991px) {
+  .list-grid { --list-grid-columns: 2; }
+}
+@media (max-width: 767px) {
+  .list-grid { --list-grid-columns: 1; }
+  [data-list-grid-view="grid"] .list-grid__link {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-areas: "media media media" "title title title" "category year .";
+    row-gap: 0.5rem;
+  }
+}
