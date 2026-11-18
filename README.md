@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.14.2/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.15.0/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -27,8 +27,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 ```html
 <script src="https://cdn.prod.website-files.com/gsap/3.15.0/Flip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.14.2/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.14.2/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.15.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.15.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -75,7 +75,7 @@ De markup in Webflow blijft gewoon: `lmo.js` voegt de tegels, de rol-tekst en de
 
 Collectie **Gemeenten** in Webflow: naam, plekken azc / gemeentelijke opvang / kleinschalige opvang AMV, uitdaging 2027, goed in, kaartpositie (links/boven in %), volgorde, contactadres, website en logo.
 
-Op de homepage staat in het gemeentenblok een verborgen collectielijst (`.municipalities-data`) met de velden als data-attributen. `lmo.js` bouwt daaruit:
+Op de homepage staat direct na het gemeentenblok een verborgen collectielijst (`.municipalities-data`) met de velden als data-attributen. (Het blok zelf is een Webflow-component, en een component kan geen CMS-lijst bevatten.) Op pagina's zonder die lijst, zoals `/gemeenten`, haalt `lmo.js` hem van de homepage. `lmo.js` bouwt daaruit:
 - de **kaartpunten** (alleen gemeenten met een kaartpositie),
 - de **chips** eronder, plus "+ N gemeenten" voor de gemeenten zonder kaartpositie,
 - het **kaartje** (naam, drie aantallen, uitdaging, "Hier zijn we goed in", knop naar `/gemeenten/<slug>`).
@@ -175,3 +175,19 @@ Alle maten in Webflow staan in rem. `lmo.css` laat de root meeschalen:
 | ≤ 767px | `clamp(14px, 4.1026vw, 17px)` — 16px op 390 |
 
 De maximale breedte van de inhoud is de Webflow-variabele *Ruimte/Max breedte* (120rem).
+
+## Pagina's en components
+
+Alle sections zijn Webflow-components (groep **Sections** voor /components, **Homepage** voor de homepage) met properties voor teksten, beelden en links. Een pagina bouw je door components onder elkaar te zetten en per instance de properties in te vullen.
+
+| Pagina | Components |
+|---|---|
+| `/praktijkvoorbeelden` | Page hero · Overzicht met filters · Call to action · Nieuwsbrief |
+| `/themas` | Page hero · Thema's · Staafdiagram · Nieuwsbrief |
+| `/gemeenten` | Page hero · Gemeenten kaart · Gemeenten raster · Tabel · Call to action |
+| `/nieuws` | Page hero · Laatste nieuws · Nieuwsbrief |
+| `/agenda` | Page hero · Evenement · Agenda · Programma · Nieuwsbrief |
+| `/kennisbank` | Page hero · Downloads · Nieuwsbrief |
+| `/over-het-leernetwerk` | Stage hero · Statement · Sticky split · Tijdlijn · Gemeenten raster · Contactpersoon uitgelicht · Twee routes · Veelgestelde vragen |
+
+Page hero heeft de schakelaars *Toon kruimel 2* (uit voor hoofdpagina's: Home / pagina) en *Toon labels*.

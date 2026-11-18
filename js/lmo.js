@@ -600,10 +600,23 @@ if (document.readyState === 'loading') {
   var blok = document.querySelector(".municipalities-block");
   if (!blok) return;
   // De CMS-lijst mag binnen het blok staan of ergens anders op de pagina
-  // (een Webflow-component kan geen CMS-lijst bevatten).
-  var bron = [].slice.call(blok.querySelectorAll(".municipalities-data [data-gemeente]"));
-  if (!bron.length) bron = [].slice.call(document.querySelectorAll(".municipalities-data [data-gemeente]"));
-  if (!bron.length) return;
+  // (een Webflow-component kan geen CMS-lijst bevatten). Staat hij niet op
+  // deze pagina (bijv. /gemeenten), dan halen we hem van de homepage.
+  var zoek = function (root) { return [].slice.call(root.querySelectorAll(".municipalities-data [data-gemeente]")); };
+  var bron = zoek(blok);
+  if (!bron.length) bron = zoek(document);
+  if (bron.length) { lmoBouwKaart(blok, bron); return; }
+  if (!window.fetch || !window.DOMParser) return;
+  fetch("/", { credentials: "same-origin" })
+    .then(function (r) { return r.ok ? r.text() : ""; })
+    .then(function (html) {
+      var lijst = zoek(new DOMParser().parseFromString(html, "text/html"));
+      if (lijst.length) lmoBouwKaart(blok, lijst);
+    })
+    .catch(function () {});
+})();
+
+function lmoBouwKaart(blok, bron) {
 
   var getal = function (v) { var n = parseFloat(v); return isNaN(n) ? null : n; };
   var gemeenten = bron.map(function (el) {
@@ -742,7 +755,7 @@ if (document.readyState === 'loading') {
   }
 
   kies(opKaart[0], false);
-})();
+}
 
 
 
