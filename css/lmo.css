@@ -931,3 +931,27 @@ button.chip {
   pointer-events: none;
   will-change: transform;
 }
+
+/* ---------------------------------------------------------------
+   Accordeon (lmo.js) — plus wordt kruis, vlak wordt koraal
+   --------------------------------------------------------------- */
+html:not(.lmo-accordion) .accordion-panel { height: auto; }
+.accordion-trigger:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 4px; border-radius: 0.25rem; }
+.accordion-icon::before,
+.accordion-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.875rem;
+  height: 2px;
+  margin: -1px 0 0 -0.4375rem;
+  border-radius: 1px;
+  background-color: var(--_kleuren---groen--950, #060f05);
+}
+.accordion-icon::after { transform: rotate(90deg); }
+.accordion-trigger:hover .accordion-icon { background-color: var(--_kleuren---zand--300, #d1cbbe); }
+.accordion-trigger[aria-expanded="true"] .accordion-icon {
+  transform: rotate(45deg);
+  background-color: var(--_kleuren---koraal--500, #f28658);
+}

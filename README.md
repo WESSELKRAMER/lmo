@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.11.5/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.0/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -26,8 +26,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.11.5/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.11.5/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -94,6 +94,35 @@ De Menu-knop in de nav (mobiel en tablet) opent een donkergroen paneel volgens F
 ## Thema's en nieuws: afbeelding volgt de muis
 
 Over de themalijst en de lijst Laatste nieuws volgt een afbeelding (22×16rem) de muis met wat vertraging, plus een koraal rondje ("Bekijk" bij thema's, "Lees" bij nieuws). Per item schuift de afbeelding naar de foto van dat item. Foto per item: `data-image="<url>"` op `.theme-row` / `.news-item` (later koppelen aan het beeldveld in het CMS); zonder `data-image` gebruikt het script voorlopig de foto's van de site. Alleen met een muis op desktop; niet bij touch, tablet of "minder beweging".
+
+## Bouwstenen (/components)
+
+De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: kopieer een section (zonder het grijze label `.library-item` › `.library-label`) naar een andere pagina. Achtergrond per section met `.section` en een modifier: `is-white`, `is-dark` (donkergroen) of geen (zand). `is-compact` geeft minder ruimte boven en onder.
+
+| # | Section | Klassen |
+|---|---|---|
+| 01 | Page hero, donker met kruimelpad | `page-hero`, `breadcrumb`, `h1 is-light` |
+| 02 | Split hero, tekst + foto + kerngegevens | `split-hero`, `fact-list` |
+| 03 | Statement, grote introtekst | `statement`, `statement-accent` |
+| 04 | Artikel met zijkolom | `article`, `article-body`, `article-quote` |
+| 05 | Citaat met persoon | `testimonial`, `person` |
+| 06 | Cijfers | `stats`, `stat` |
+| 07 | Kenmerken, 3 kolommen | `feature-grid`, `feature-icon is-coral/is-blue/is-green` |
+| 08 | Stappenplan | `step-list`, `step` |
+| 09 | Overzicht met filters, kaarten en paginering | `filter-chip`, `practice-cards`, `pagination` |
+| 10 | Sticky split | `sticky-split`, `principle` |
+| 11 | Veelgestelde vragen (accordeon, `lmo.js`) | `accordion-item`, `accordion-trigger`, `accordion-panel` |
+| 12 | Contactpersonen | `team-grid`, `team-card` |
+| 13 | Call to action, koraal | `cta-banner` |
+| 14 | Downloads | `file-row`, `file-type is-blue/is-green` |
+| 15 | Agenda | `event-card`, `event-date is-blue/is-green` |
+| 16 | Deelnemende gemeenten | `member-grid`, `member` |
+| 17 | Tijdlijn | `milestone`, `milestone-dot is-current` |
+| 18 | Brede foto met onderschrift | `media-block`, `media-badge` |
+| 19 | Twee routes | `route-card is-dark/is-sand` |
+| 20 | Tabel | `data-table`, `data-row is-head`, `data-cell is-number` |
+
+De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBouwstenen` in `lmo.js`).
 
 ## Smooth scroll (Lenis)
 

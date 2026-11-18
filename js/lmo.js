@@ -35,6 +35,16 @@
     "fade":    [".image-text-photo"],
     "stagger": [".theme-list", ".figures", ".timeline"]
   };
+  // Sections van /components (bouwstenen voor nieuwe pagina's).
+  var perKlasseBouwstenen = {
+    "fade-up": [".statement", ".cta-banner", ".media-block", ".split-hero-content", ".testimonial",
+                ".table-block", ".article-body", ".stats-intro", ".faq-side", ".sticky-split-side"],
+    "stagger": [".feature-grid", ".step-list", ".team-grid", ".event-list", ".file-list", ".member-grid",
+                ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion"]
+  };
+  Object.keys(perKlasse).forEach(function (soort) {
+    perKlasse[soort] = perKlasse[soort].concat(perKlasseBouwstenen[soort] || []);
+  });
   Object.keys(perKlasse).forEach(function (soort) {
     document.querySelectorAll(perKlasse[soort].join(",")).forEach(function (el) {
       if (soort === "stagger") el.setAttribute("data-lmo-stagger", "");
@@ -788,4 +798,53 @@ if (document.readyState === 'loading') {
 
   // Naar desktopbreedte: menu dicht.
   window.matchMedia("(min-width: 992px)").addEventListener("change", function (m) { if (m.matches) sluit(false); });
+})();
+
+
+/* ---------------------------------------------------------------
+   Accordeon (/components, sectie Veelgestelde vragen).
+   Markup in Webflow: .accordion > .accordion-item > .accordion-trigger
+   (+ .accordion-question, .accordion-icon) en .accordion-panel.
+   Het script maakt de trigger een knop (toetsenbord, aria) en klapt het
+   paneel open met GSAP. Zonder JS staan alle antwoorden open.
+   --------------------------------------------------------------- */
+(function () {
+  var items = document.querySelectorAll(".accordion-item");
+  if (!items.length) return;
+  document.documentElement.classList.add("lmo-accordion");
+  var stil = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  items.forEach(function (item, i) {
+    var knop = item.querySelector(".accordion-trigger");
+    var paneel = item.querySelector(".accordion-panel");
+    if (!knop || !paneel) return;
+    var id = "lmo-accordeon-" + i;
+    paneel.id = id;
+    paneel.setAttribute("role", "region");
+    paneel.hidden = true;
+    knop.setAttribute("role", "button");
+    knop.setAttribute("tabindex", "0");
+    knop.setAttribute("aria-expanded", "false");
+    knop.setAttribute("aria-controls", id);
+
+    var zet = function (open) {
+      var gsap = window.gsap;
+      knop.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) paneel.hidden = false;
+      if (gsap && !stil.matches) {
+        gsap.killTweensOf(paneel);
+        gsap.fromTo(paneel, { height: open ? 0 : paneel.offsetHeight },
+          { height: open ? "auto" : 0, duration: open ? 0.5 : 0.4, ease: "power3.inOut",
+            onComplete: function () { if (!open) paneel.hidden = true; } });
+      } else {
+        paneel.style.height = open ? "auto" : "0px";
+        if (!open) paneel.hidden = true;
+      }
+    };
+    var wissel = function () { zet(knop.getAttribute("aria-expanded") !== "true"); };
+    knop.addEventListener("click", wissel);
+    knop.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); wissel(); }
+    });
+  });
 })();
