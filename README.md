@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.1/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -26,8 +26,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.0/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.0/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.1/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.1/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -113,6 +113,7 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 | 10 | Sticky split | `sticky-split`, `principle` |
 | 11 | Veelgestelde vragen (accordeon, `lmo.js`) | `accordion-item`, `accordion-trigger`, `accordion-panel` |
 | 12 | Contactpersonen | `team-grid`, `team-card` |
+| 12B | Contactpersonen als slider (GSAP, `lmo.js`): pijlen, slepen, pijltjestoetsen, voortgangsbalk | `slider-viewport`, `slider-track`, `team-card slider-slide`, `slider-button is-prev/is-next`, `slider-progress` |
 | 13 | Call to action, koraal | `cta-banner` |
 | 14 | Downloads | `file-row`, `file-type is-blue/is-green` |
 | 15 | Agenda | `event-card`, `event-date is-blue/is-green` |

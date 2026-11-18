@@ -40,7 +40,7 @@
     "fade-up": [".statement", ".cta-banner", ".media-block", ".split-hero-content", ".testimonial",
                 ".table-block", ".article-body", ".stats-intro", ".faq-side", ".sticky-split-side"],
     "stagger": [".feature-grid", ".step-list", ".team-grid", ".event-list", ".file-list", ".member-grid",
-                ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion"]
+                ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion", ".slider-track"]
   };
   Object.keys(perKlasse).forEach(function (soort) {
     perKlasse[soort] = perKlasse[soort].concat(perKlasseBouwstenen[soort] || []);
@@ -846,5 +846,140 @@ if (document.readyState === 'loading') {
     knop.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); wissel(); }
     });
+  });
+})();
+
+
+/* ---------------------------------------------------------------
+   Slider (/components, sectie 12B). Alleen GSAP, geen plugin.
+   Markup: een section met .slider-button.is-prev / .is-next,
+   .slider-viewport > .slider-track > slides, en optioneel
+   .slider-progress > .slider-progress-bar.
+   - Pijlen schuiven één kaart; slepen met muis of vinger, met
+     doorglijden en uitlijnen op de dichtstbijzijnde kaart.
+   - Pijltjestoetsen werken als de focus in de slider staat.
+   - Na slepen wordt een klik op een link in de kaart genegeerd.
+   --------------------------------------------------------------- */
+(function () {
+  var gsap = window.gsap;
+  if (!gsap) return;
+  var stil = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  document.querySelectorAll(".slider-viewport").forEach(function (viewport) {
+    var track = viewport.querySelector(".slider-track");
+    if (!track || track.children.length < 2) return;
+    var blok = viewport.closest("section") || viewport.parentElement;
+    var vorige = blok.querySelector(".slider-button.is-prev");
+    var volgende = blok.querySelector(".slider-button.is-next");
+    var balk = blok.querySelector(".slider-progress-bar");
+    var slides = [].slice.call(track.children);
+
+    var x = 0, max = 0, punten = [];
+    var meet = function () {
+      max = Math.max(0, track.scrollWidth - viewport.clientWidth);
+      punten = slides.map(function (s) { return Math.min(s.offsetLeft, max); })
+        .filter(function (p, i, a) { return a.indexOf(p) === i; });
+      if (punten[punten.length - 1] !== max) punten.push(max);
+    };
+    var dichtstbij = function (waarde) {
+      var best = 0;
+      punten.forEach(function (p, i) { if (Math.abs(p - waarde) < Math.abs(punten[best] - waarde)) best = i; });
+      return best;
+    };
+    var toon = function () {
+      if (balk) gsap.set(balk, { scaleX: max ? (x + viewport.clientWidth) / track.scrollWidth : 1 });
+      var begin = x <= 1, eind = x >= max - 1;
+      [[vorige, begin], [volgende, eind]].forEach(function (k) {
+        if (!k[0]) return;
+        k[0].setAttribute("aria-disabled", k[1] ? "true" : "false");
+      });
+    };
+    var naar = function (doel, duur) {
+      x = Math.max(0, Math.min(max, doel));
+      gsap.to(track, {
+        x: -x, duration: stil.matches ? 0 : (duur == null ? 0.8 : duur), ease: "power3.out",
+        overwrite: true
+      });
+      toon();
+    };
+    var stap = function (richting) {
+      var i = dichtstbij(x) + richting;
+      naar(punten[Math.max(0, Math.min(punten.length - 1, i))]);
+    };
+
+    [[vorige, -1], [volgende, 1]].forEach(function (k) {
+      var knop = k[0];
+      if (!knop) return;
+      knop.setAttribute("role", "button");
+      knop.addEventListener("click", function (e) { e.preventDefault(); stap(k[1]); });
+      knop.addEventListener("keydown", function (e) {
+        if (e.key === " ") { e.preventDefault(); stap(k[1]); }
+      });
+    });
+    blok.addEventListener("keydown", function (e) {
+      if (!blok.contains(document.activeElement)) return;
+      if (e.key === "ArrowRight") { e.preventDefault(); stap(1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); stap(-1); }
+    });
+
+    // Tab naar een kaart buiten beeld: schuif hem erin.
+    track.addEventListener("focusin", function (e) {
+      var slide = slides.filter(function (s) { return s.contains(e.target); })[0];
+      if (!slide) return;
+      viewport.scrollLeft = 0;
+      var links = slide.offsetLeft, rechts = links + slide.offsetWidth;
+      if (links < x || rechts > x + viewport.clientWidth) naar(punten[dichtstbij(links)]);
+    });
+
+    // Slepen
+    var sleep = null, gesleept = false;
+    track.addEventListener("pointerdown", function (e) {
+      if (e.button !== 0) return;
+      gsap.killTweensOf(track);
+      x = -gsap.getProperty(track, "x");
+      sleep = { start: e.clientX, startY: e.clientY, x: x, t: performance.now(), laatst: e.clientX, v: 0, actief: false, id: e.pointerId };
+      gesleept = false;
+    });
+    window.addEventListener("pointermove", function (e) {
+      if (!sleep || e.pointerId !== sleep.id) return;
+      var dx = e.clientX - sleep.start;
+      if (!sleep.actief) {
+        if (Math.abs(dx) < 6) return;
+        if (Math.abs(e.clientY - sleep.startY) > Math.abs(dx)) { sleep = null; return; }  // verticaal: pagina scrollen
+        sleep.actief = true;
+        gesleept = true;
+        track.style.cursor = "grabbing";
+        try { track.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      var doel = sleep.x - dx;
+      // Weerstand voorbij de randen
+      if (doel < 0) doel = doel / 3;
+      if (doel > max) doel = max + (doel - max) / 3;
+      x = doel;
+      gsap.set(track, { x: -x });
+      var nu = performance.now();
+      sleep.v = (e.clientX - sleep.laatst) / Math.max(1, nu - sleep.t);
+      sleep.laatst = e.clientX; sleep.t = nu;
+      toon();
+    });
+    var los = function () {
+      if (!sleep) return;
+      var actief = sleep.actief, v = sleep.v;
+      sleep = null;
+      track.style.cursor = "";
+      if (!actief) return;
+      naar(punten[dichtstbij(x - v * 250)], 0.7);  // doorglijden met de sleepsnelheid
+    };
+    window.addEventListener("pointerup", los);
+    window.addEventListener("pointercancel", los);
+    track.addEventListener("click", function (e) {
+      if (gesleept) { e.preventDefault(); e.stopPropagation(); gesleept = false; }
+    }, true);
+    track.addEventListener("dragstart", function (e) { e.preventDefault(); });
+
+    meet();
+    toon();
+    window.addEventListener("resize", function () { meet(); naar(punten[dichtstbij(x)], 0); });
+    window.addEventListener("load", function () { meet(); toon(); });
   });
 })();

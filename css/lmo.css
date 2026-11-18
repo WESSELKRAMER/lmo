@@ -955,3 +955,11 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   transform: rotate(45deg);
   background-color: var(--_kleuren---koraal--500, #f28658);
 }
+
+/* ---------------------------------------------------------------
+   Slider (lmo.js)
+   --------------------------------------------------------------- */
+.slider-button[aria-disabled="true"] { opacity: 0.35; pointer-events: none; }
+.slider-button:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 2px; }
+.slider-track { user-select: none; -webkit-user-select: none; will-change: transform; }
+.slider-track img { -webkit-user-drag: none; pointer-events: none; }
