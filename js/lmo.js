@@ -1,5 +1,6 @@
 /* Leernetwerk Menswaardige Opvang — animaties (GSAP + ScrollTrigger).
-   Geladen in Site settings › Custom code › Footer, ná gsap en ScrollTrigger.
+   Geladen in Site settings › Custom code › Footer. GSAP en ScrollTrigger komen uit
+   Webflow zelf (Site settings › GSAP-integratie).
 
    Gebruik in Webflow via een custom attribute op een element:
      data-lmo="fade-up"   schuift omhoog en vervaagt in bij in beeld komen
@@ -12,9 +13,12 @@
    bij een open menu: lmoLenis.stop() / lmoLenis.start().
    Een element dat zelf scrolt krijgt data-lenis-prevent. */
 
-(function () {
+(function start() {
+  // GSAP komt uit Webflow (Site settings › GSAP). Is het er nog niet als dit
+  // script draait, dan wachten we tot de pagina geladen is.
   if (!window.gsap) {
-    console.warn("[lmo] GSAP niet geladen");
+    if (!start.wacht) { start.wacht = true; window.addEventListener("load", start); }
+    else console.warn("[lmo] GSAP niet geladen");
     return;
   }
 
@@ -265,37 +269,44 @@
     var rx = gsap.quickTo(rondje, "x", { duration: 0.45, ease: "power3" });
     var ry = gsap.quickTo(rondje, "y", { duration: 0.45, ease: "power3" });
 
-    var binnen = false;
-    var volg = function (e) { bx(e.clientX); by(e.clientY); rx(e.clientX); ry(e.clientY); };
+    // Bepaalt bij elke muisbeweging én bij scrollen welk item onder de muis
+    // staat. Bij scrollen beweegt de muis niet, dus mouseenter/-leave komen
+    // dan niet; zonder deze check bleef het rondje boven de hero hangen.
+    var binnen = false, huidig = -1, mx = -1, my = -1;
     var naar = function (i) {
       gsap.to(spoor, { yPercent: -(100 / items.length) * i, duration: 0.6, ease: "power3.inOut", overwrite: true });
     };
-
-    var binnenkomen = function (e) {
-      binnen = true;
-      gsap.set([beeld, rondje], { x: e.clientX, y: e.clientY });
-      gsap.to(beeld, { scale: 1, duration: 0.45, ease: "power3.out", overwrite: "auto" });
-      gsap.to(rondje, { scale: 1, duration: 0.45, ease: "power3.out", delay: 0.05, overwrite: "auto" });
+    var check = function () {
+      if (mx < 0) return;
+      var el = document.elementFromPoint(mx, my);
+      var item = el && el.closest ? el.closest(itemSel) : null;
+      var i = item ? items.indexOf(item) : -1;
+      if (i >= 0 && !binnen) {
+        binnen = true;
+        gsap.set([beeld, rondje], { x: mx, y: my });
+        gsap.to(beeld, { scale: 1, duration: 0.45, ease: "power3.out", overwrite: "auto" });
+        gsap.to(rondje, { scale: 1, duration: 0.45, ease: "power3.out", delay: 0.05, overwrite: "auto" });
+      } else if (i < 0 && binnen) {
+        binnen = false;
+        gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in", overwrite: "auto" });
+      }
+      if (i >= 0 && i !== huidig) { huidig = i; naar(i); }
     };
-    var weggaan = function () {
-      binnen = false;
-      gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in", overwrite: "auto" });
+    var volg = function (e) {
+      mx = e.clientX; my = e.clientY;
+      bx(mx); by(my); rx(mx); ry(my);
+      check();
     };
+    var weg = function () { mx = -1; if (binnen) { binnen = false; gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in", overwrite: "auto" }); } };
 
-    lijst.addEventListener("mouseenter", binnenkomen);
-    lijst.addEventListener("mouseleave", weggaan);
-    window.addEventListener("mousemove", volg);
-    var luisteraars = items.map(function (it, i) {
-      var f = function () { naar(i); };
-      it.addEventListener("mouseenter", f);
-      return f;
-    });
+    window.addEventListener("mousemove", volg, { passive: true });
+    window.addEventListener("scroll", check, { passive: true });
+    document.documentElement.addEventListener("mouseleave", weg);
 
     return function () {
-      lijst.removeEventListener("mouseenter", binnenkomen);
-      lijst.removeEventListener("mouseleave", weggaan);
       window.removeEventListener("mousemove", volg);
-      items.forEach(function (it, i) { it.removeEventListener("mouseenter", luisteraars[i]); });
+      window.removeEventListener("scroll", check);
+      document.documentElement.removeEventListener("mouseleave", weg);
       beeld.remove();
       rondje.remove();
     };
