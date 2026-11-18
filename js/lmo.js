@@ -758,45 +758,64 @@ if (document.readyState === 'loading') {
   }
   var VOL = "inset(0px 0px 0px 0px round 0px)";
 
+  var inhoud = function () { return paneel.querySelectorAll(".lmo-menu-inner > *"); };
+  var vangnet = 0;
+  // Animeert de clip-path vanaf waar hij nu is (ook als je halverwege
+  // opnieuw tikt), in plaats van terug te springen naar het begin.
+  function clipNaar(doel, vars) {
+    gsap.killTweensOf(paneel);
+    if (!paneel.style.clipPath) gsap.set(paneel, { clipPath: VOL });
+    return gsap.to(paneel, Object.assign({ clipPath: doel, ease: "power3.inOut" }, vars));
+  }
+
   function openMenu() {
     if (open) return;
     open = true;
+    clearTimeout(vangnet);
+    var wasDicht = paneel.hidden;
     paneel.hidden = false;
-    document.documentElement.classList.add("lmo-menu-open");
+    document.documentElement.classList.add("lmo-menu-open", "lmo-menu-lock");
     knop.setAttribute("aria-expanded", "true");
     zetKnop(false);
     if (window.lmoLenis) window.lmoLenis.stop();
     if (gsap && !stil.matches) {
-      gsap.killTweensOf(paneel);
-      gsap.fromTo(paneel, { clipPath: knopVorm() }, { clipPath: VOL, duration: 0.7, ease: "power3.inOut", clearProps: "clipPath" });
+      gsap.killTweensOf(inhoud());
+      gsap.set(inhoud(), { clearProps: "opacity,visibility" });
+      if (wasDicht) gsap.set(paneel, { clipPath: knopVorm() });
+      clipNaar(VOL, { duration: 0.7, onComplete: function () { gsap.set(paneel, { clearProps: "clipPath" }); } });
       gsap.fromTo(paneel.querySelectorAll(".lmo-menu-search, .lmo-menu-list li, .lmo-menu-actions > *"),
         { autoAlpha: 0, y: "1rem" },
-        { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035, delay: 0.35, clearProps: "transform,opacity,visibility" });
+        { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.035, delay: wasDicht ? 0.35 : 0, overwrite: true, clearProps: "transform,opacity,visibility" });
     }
   }
 
   function sluit(terugFocus) {
     if (!open) return;
     open = false;
+    // De nav krijgt meteen zijn gewone stand (zodat de knop op z'n
+    // eindplek staat); scrollen gaat pas weer aan als het paneel weg is.
     document.documentElement.classList.remove("lmo-menu-open");
     knop.setAttribute("aria-expanded", "false");
     zetKnop(true);
-    if (window.lmoLenis) window.lmoLenis.start();
-    var klaar = function () { if (!open) paneel.hidden = true; };
+    var klaar = function () {
+      if (open) return;
+      clearTimeout(vangnet);
+      paneel.hidden = true;
+      document.documentElement.classList.remove("lmo-menu-lock");
+      if (window.lmoLenis) window.lmoLenis.start();
+      if (gsap) {
+        gsap.set(paneel, { clearProps: "clipPath" });
+        gsap.set(inhoud(), { clearProps: "opacity,visibility" });
+      }
+    };
     if (gsap && !stil.matches) {
-      gsap.killTweensOf(paneel);
-      gsap.to(paneel.querySelectorAll(".lmo-menu-inner > *"), { autoAlpha: 0, duration: 0.15, ease: "power1.in" });
-      gsap.fromTo(paneel, { clipPath: VOL }, {
-        clipPath: knopVorm(), duration: 0.55, ease: "power3.inOut", delay: 0.05,
-        onComplete: function () {
-          klaar();
-          gsap.set(paneel, { clearProps: "clipPath" });
-          gsap.set(paneel.querySelectorAll(".lmo-menu-inner > *"), { clearProps: "opacity,visibility" });
-        }
-      });
-      setTimeout(klaar, 800);
+      gsap.killTweensOf(paneel.querySelectorAll(".lmo-menu-search, .lmo-menu-list li, .lmo-menu-actions > *"));
+      gsap.to(inhoud(), { autoAlpha: 0, duration: 0.15, ease: "power1.in", overwrite: true });
+      clipNaar(knopVorm(), { duration: 0.55, delay: 0.05, onComplete: klaar });
+      clearTimeout(vangnet);
+      vangnet = setTimeout(klaar, 1000);
     } else klaar();
-    if (terugFocus) knop.focus();
+    if (terugFocus) knop.focus({ preventScroll: true });
   }
 
   knop.addEventListener("click", function (e) {

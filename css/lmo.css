@@ -820,6 +820,7 @@ button.chip {
   background-color: var(--_kleuren---groen--900, #182a12);
   color: var(--_kleuren---neutraal--wit, #fff);
   font-family: var(--_typografie---font--sans, "Google Sans Flex", Arial, sans-serif);
+  will-change: clip-path;
 }
 .lmo-menu[hidden] { display: none; }
 .lmo-menu-inner {
@@ -866,7 +867,7 @@ button.chip {
 
 /* Nav tijdens het menu: alleen logo en "Sluiten" (zoals in Figma) */
 .lmo-menu-open .nav .search-button { display: none; }
-.lmo-menu-open, .lmo-menu-open body { overflow: hidden; }
+.lmo-menu-lock, .lmo-menu-lock body { overflow: hidden; }
 .menu-button { cursor: pointer; text-decoration: none; }
 @media (min-width: 992px) { .lmo-menu { display: none !important; } }
 
