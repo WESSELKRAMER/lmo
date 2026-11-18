@@ -972,3 +972,12 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   color: var(--_kleuren---groen--950, #060f05);
 }
 .image-hero-photo { will-change: transform; }
+
+/* Datumblokjes (agenda, hero 02D): cijfer en maand optisch gecentreerd.
+   text-box snijdt de ruimte boven/onder de letters weg, zodat "20" en
+   "MEI" samen precies in het midden van het vlak staan. */
+.event-date, .arch-hero-date { row-gap: 0.4375rem; }
+.event-date-month { margin-top: 0; }
+@supports (text-box: trim-both cap alphabetic) {
+  .event-date-day, .event-date-month { text-box: trim-both cap alphabetic; }
+}

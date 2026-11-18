@@ -39,7 +39,7 @@
   var perKlasseBouwstenen = {
     "fade-up": [".statement", ".cta-banner", ".media-block", ".split-hero-content", ".testimonial",
                 ".table-block", ".article-body", ".stats-intro", ".faq-side", ".sticky-split-side",
-                ".image-hero-content", ".stage-hero-content", ".stage-hero-media", ".arch-hero-content"],
+                ".image-hero-content", ".stage-hero-content", ".arch-hero-content"],
     "stagger": [".feature-grid", ".step-list", ".team-grid", ".event-list", ".file-list", ".member-grid",
                 ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion", ".slider-track"]
   };
