@@ -38,7 +38,8 @@
   // Sections van /components (bouwstenen voor nieuwe pagina's).
   var perKlasseBouwstenen = {
     "fade-up": [".statement", ".cta-banner", ".media-block", ".split-hero-content", ".testimonial",
-                ".table-block", ".article-body", ".stats-intro", ".faq-side", ".sticky-split-side"],
+                ".table-block", ".article-body", ".stats-intro", ".faq-side", ".sticky-split-side",
+                ".image-hero-content", ".stage-hero-content", ".stage-hero-media", ".arch-hero-content"],
     "stagger": [".feature-grid", ".step-list", ".team-grid", ".event-list", ".file-list", ".member-grid",
                 ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion", ".slider-track"]
   };
@@ -175,6 +176,31 @@
       });
     });
     return function () { getallen.forEach(function (g) { g[0].textContent = g[1]; }); };
+  });
+
+  /* Hero's met beeld (/components 02B–02D):
+     - 02B: foto zoomt bij het laden rustig uit en schuift bij scrollen
+       iets langzamer mee (parallax).
+     - 02D: koraal cirkel groeit, infokaart schuift omhoog. */
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    gsap.utils.toArray(".image-hero").forEach(function (hero) {
+      var foto = hero.querySelector(".image-hero-photo");
+      if (!foto) return;
+      gsap.fromTo(foto, { scale: 1.12 }, { scale: 1, duration: 1.8, ease: "power2.out" });
+      if (window.ScrollTrigger) {
+        gsap.to(foto, { yPercent: 12, ease: "none",
+          scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true } });
+      }
+    });
+    gsap.utils.toArray(".arch-hero-visual").forEach(function (v) {
+      var st = { trigger: v, start: "top 85%", once: true };
+      var cirkel = v.querySelector(".arch-hero-circle");
+      var kaart = v.querySelector(".arch-hero-card");
+      var beeld = v.querySelector(".arch-hero-media");
+      if (beeld) gsap.from(beeld, { clipPath: "inset(100% 0% 0% 0% round 999px 999px 24px 24px)", duration: 1.2, ease: "power3.inOut", scrollTrigger: st });
+      if (cirkel) gsap.from(cirkel, { scale: 0, duration: 0.9, ease: "back.out(1.6)", delay: 0.5, scrollTrigger: st });
+      if (kaart) gsap.from(kaart, { autoAlpha: 0, y: "1.5rem", duration: 0.7, ease: "power3.out", delay: 0.8, scrollTrigger: st });
+    });
   });
 
   /* Thema's en Laatste nieuws: een afbeelding volgt de muis over de lijst

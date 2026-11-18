@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.1/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.2/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -26,8 +26,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.1/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.1/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.2/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.2/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -103,6 +103,9 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 |---|---|---|
 | 01 | Page hero, donker met kruimelpad | `page-hero`, `breadcrumb`, `h1 is-light` |
 | 02 | Split hero, tekst + foto + kerngegevens | `split-hero`, `fact-list` |
+| 02B | Hero met foto over de volle breedte, donkere verloop onderin, scroll-knop; foto zoomt uit en heeft parallax | `image-hero`, `image-hero-photo`, `image-hero-shade` |
+| 02C | Gecentreerde hero op donkergroen, brede foto valt over de rand naar de zandkleur | `stage-hero`, `stage-hero-media`, `h1 is-light is-centered` |
+| 02D | Hero met foto in boogvorm, koraal cirkel en infokaart (bijv. volgende bijeenkomst) | `arch-hero`, `arch-hero-media`, `arch-hero-card` |
 | 03 | Statement, grote introtekst | `statement`, `statement-accent` |
 | 04 | Artikel met zijkolom | `article`, `article-body`, `article-quote` |
 | 05 | Citaat met persoon | `testimonial`, `person` |

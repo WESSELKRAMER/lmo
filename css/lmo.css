@@ -963,3 +963,12 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
 .slider-button:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 2px; }
 .slider-track { user-select: none; -webkit-user-select: none; will-change: transform; }
 .slider-track img { -webkit-user-drag: none; pointer-events: none; }
+
+/* Hero's met beeld (/components 02B–02D) */
+.image-hero-scroll:hover .image-hero-scroll-icon,
+.image-hero-scroll:focus-visible .image-hero-scroll-icon {
+  background-color: var(--_kleuren---koraal--500, #f28658);
+  border-color: var(--_kleuren---koraal--500, #f28658);
+  color: var(--_kleuren---groen--950, #060f05);
+}
+.image-hero-photo { will-change: transform; }
