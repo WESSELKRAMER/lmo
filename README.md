@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.3/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.4/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -26,8 +26,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.3/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.3/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.4/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.4/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -121,7 +121,7 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 | 14 | Downloads | `file-row`, `file-type is-blue/is-green` |
 | 15 | Agenda | `event-card`, `event-date is-blue/is-green` |
 | 16 | Deelnemende gemeenten | `member-grid`, `member` |
-| 17 | Tijdlijn | `milestone`, `milestone-dot is-current` |
+| 17 | Tijdlijn; lijn tussen de bolletjes die bij scrollen koraal volloopt | `milestone`, `milestone-dot is-current` |
 | 18 | Brede foto met onderschrift | `media-block`, `media-badge` |
 | 19 | Twee routes | `route-card is-dark/is-sand` |
 | 20 | Tabel | `data-table`, `data-row is-head`, `data-cell is-number` |

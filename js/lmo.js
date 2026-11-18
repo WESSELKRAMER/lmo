@@ -203,6 +203,37 @@
     });
   });
 
+  /* Tijdlijn: de koraal lijn groeit mee met scrollen; bolletjes die
+     gepasseerd zijn krijgen een koraal rand. */
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    if (!window.ScrollTrigger) return;
+    var triggers = gsap.utils.toArray(".milestone-list").map(function (lijst) {
+      var stukken = [].slice.call(lijst.querySelectorAll(".milestone"));
+      if (stukken.length < 2) return null;
+      var n = stukken.length - 1;
+      return window.ScrollTrigger.create({
+        trigger: lijst,
+        start: "top 65%",
+        end: "bottom 65%",
+        scrub: 0.4,
+        onUpdate: function (self) {
+          var p = self.progress * n;
+          stukken.forEach(function (m, i) {
+            m.style.setProperty("--fill", Math.max(0, Math.min(1, p - i)).toFixed(3));
+            m.classList.toggle("is-passed", p >= i);
+          });
+        }
+      });
+    });
+    return function () {
+      triggers.forEach(function (t) { if (t) t.kill(); });
+      document.querySelectorAll(".milestone").forEach(function (m) {
+        m.style.removeProperty("--fill");
+        m.classList.remove("is-passed");
+      });
+    };
+  });
+
   /* Thema's en Laatste nieuws: een afbeelding volgt de muis over de lijst
      (zoals op dennissnellenberg.com/work). De afbeelding schuift verticaal
      naar de foto van het item waar je op staat; een koraal rondje volgt

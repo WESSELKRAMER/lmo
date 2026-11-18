@@ -981,3 +981,34 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
 @supports (text-box: trim-both cap alphabetic) {
   .event-date-day, .event-date-month { text-box: trim-both cap alphabetic; }
 }
+
+/* ---------------------------------------------------------------
+   Tijdlijn (/components 17): verticale lijn tussen de bolletjes.
+   ::before is de lijn, ::after de koraal vulling die lmo.js bij het
+   scrollen laat meegroeien (--fill 0–1 per stuk). Zonder JS of bij
+   "minder beweging" staat alleen de rustige lijn.
+   --------------------------------------------------------------- */
+.milestone::before,
+.milestone::after {
+  content: "";
+  position: absolute;
+  left: calc(10.75rem - 1px);
+  top: 1.875rem;
+  bottom: -0.125rem;
+  width: 2px;
+  border-radius: 1px;
+}
+.milestone::before { background-color: rgba(200, 194, 179, 0.28); }
+.milestone::after {
+  background-color: var(--_kleuren---koraal--500, #f28658);
+  transform-origin: 50% 0%;
+  transform: scaleY(var(--fill, 0));
+}
+.milestone:last-child::before,
+.milestone:last-child::after { display: none; }
+.milestone-dot { z-index: 1; transition: border-color 0.3s, background-color 0.3s; }
+.milestone.is-passed .milestone-dot { border-color: var(--_kleuren---koraal--500, #f28658); }
+@media screen and (max-width: 767px) {
+  .milestone::before,
+  .milestone::after { left: calc(0.75rem - 1px); top: 1.625rem; bottom: 0.125rem; }
+}
