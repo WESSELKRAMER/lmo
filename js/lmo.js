@@ -284,11 +284,15 @@
       if (i >= 0 && !binnen) {
         binnen = true;
         gsap.set([beeld, rondje], { x: mx, y: my });
-        gsap.to(beeld, { scale: 1, duration: 0.45, ease: "power3.out", overwrite: "auto" });
-        gsap.to(rondje, { scale: 1, duration: 0.45, ease: "power3.out", delay: 0.05, overwrite: "auto" });
+        // Eerst de schaal-tweens stoppen: overwrite "auto" laat een tween met
+        // delay die nog niet loopt staan, en dan kwam het rondje na snel
+        // doorscrollen terug. (Niet overwrite: true, dat stopt ook het volgen.)
+        gsap.killTweensOf([beeld, rondje], "scale");
+        gsap.to(beeld, { scale: 1, duration: 0.45, ease: "power3.out" });
+        gsap.to(rondje, { scale: 1, duration: 0.45, ease: "power3.out", delay: 0.05 });
       } else if (i < 0 && binnen) {
         binnen = false;
-        gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in", overwrite: "auto" });
+        gsap.killTweensOf([beeld, rondje], "scale"); gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in" });
       }
       if (i >= 0 && i !== huidig) { huidig = i; naar(i); }
     };
@@ -297,7 +301,7 @@
       bx(mx); by(my); rx(mx); ry(my);
       check();
     };
-    var weg = function () { mx = -1; if (binnen) { binnen = false; gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in", overwrite: "auto" }); } };
+    var weg = function () { mx = -1; if (binnen) { binnen = false; gsap.killTweensOf([beeld, rondje], "scale"); gsap.to([beeld, rondje], { scale: 0, duration: 0.35, ease: "power3.in" }); } };
 
     window.addEventListener("mousemove", volg, { passive: true });
     window.addEventListener("scroll", check, { passive: true });
