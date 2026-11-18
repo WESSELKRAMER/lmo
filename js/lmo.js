@@ -223,37 +223,38 @@
     };
   });
 
-  /* Laatste nieuws: een afbeelding volgt de muis over de lijst (zoals op
-     dennissnellenberg.com/work). De afbeelding schuift verticaal naar de
-     foto van het item waar je op staat; een koraal rondje "Lees" volgt
+  /* Thema's en Laatste nieuws: een afbeelding volgt de muis over de lijst
+     (zoals op dennissnellenberg.com/work). De afbeelding schuift verticaal
+     naar de foto van het item waar je op staat; een koraal rondje volgt
      iets sneller. Alleen met een muis op desktop.
-     Foto per item: data-image op .news-item (later uit het CMS);
+     Foto per item: data-image op het item (later uit het CMS);
      zonder data-image vallen we terug op de foto's van de site. */
-  mm.add("(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) and (min-width: 992px)", function () {
-    var lijst = document.querySelector(".timeline");
-    var items = lijst ? [].slice.call(lijst.querySelectorAll(".news-item")) : [];
+  var lijstPreview = function (lijstSel, itemSel, label, start) {
+    var lijst = document.querySelector(lijstSel);
+    var items = lijst ? [].slice.call(lijst.querySelectorAll(itemSel)) : [];
     if (!items.length) return;
 
     var reserve = [].slice.call(document.querySelectorAll(".practice-card-photo, .image-text-photo"))
       .map(function (img) { return img.currentSrc || img.src; })
       .filter(function (src, i, a) { return src && a.indexOf(src) === i; });
     var fotos = items.map(function (it, i) {
-      return it.getAttribute("data-image") || reserve[i % Math.max(reserve.length, 1)] || "";
+      return it.getAttribute("data-image") || reserve[(i + start) % Math.max(reserve.length, 1)] || "";
     });
     if (!fotos.some(Boolean)) return;
 
     var beeld = document.createElement("div");
-    beeld.className = "news-preview";
+    beeld.className = "list-preview";
     beeld.setAttribute("aria-hidden", "true");
-    beeld.innerHTML = '<div class="news-preview-track" style="height:' + (items.length * 100) + '%">' +
+    beeld.innerHTML = '<div class="list-preview-track" style="height:' + (items.length * 100) + '%">' +
       fotos.map(function (src) {
-        return '<div class="news-preview-slide" style="height:' + (100 / items.length) + '%">' +
+        return '<div class="list-preview-slide" style="height:' + (100 / items.length) + '%">' +
           (src ? '<img src="' + src + '" alt="" loading="lazy">' : "") + "</div>";
       }).join("") + "</div>";
     var rondje = document.createElement("div");
-    rondje.className = "news-preview-cursor";
+    rondje.className = "list-preview-cursor";
     rondje.setAttribute("aria-hidden", "true");
-    rondje.innerHTML = "<span>Lees</span>";
+    rondje.innerHTML = "<span></span>";
+    rondje.firstChild.textContent = label;
     document.body.appendChild(beeld);
     document.body.appendChild(rondje);
     var spoor = beeld.firstChild;
@@ -298,6 +299,13 @@
       beeld.remove();
       rondje.remove();
     };
+  };
+  mm.add("(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) and (min-width: 992px)", function () {
+    var opruimen = [
+      lijstPreview(".theme-list", ".theme-row", "Bekijk", 0),
+      lijstPreview(".timeline", ".news-item", "Lees", 3)
+    ];
+    return function () { opruimen.forEach(function (f) { if (f) f(); }); };
   });
 
   // ScrollTrigger meet zelf opnieuw bij resize; na het laden van afbeeldingen
