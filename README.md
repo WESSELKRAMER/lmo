@@ -97,7 +97,7 @@ Over de themalijst en de lijst Laatste nieuws volgt een afbeelding (22×16rem) d
 
 ## Bouwstenen (/components)
 
-De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: kopieer een section (zonder het grijze label `.library-item` › `.library-label`) naar een andere pagina. Achtergrond per section met `.section` en een modifier: `is-white`, `is-dark` (donkergroen) of geen (zand). `is-compact` geeft minder ruimte boven en onder.
+De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: kopieer een section naar een andere pagina. Achtergrond per section met `.section` en een modifier: `is-white`, `is-dark` (donkergroen) of geen (zand). `is-compact` geeft minder ruimte boven en onder.
 
 | # | Section | Klassen |
 |---|---|---|
