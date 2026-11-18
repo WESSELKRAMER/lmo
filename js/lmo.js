@@ -285,8 +285,14 @@
       });
     });
     return function () {
-      tweens.forEach(function (t) { if (t) { t.scrollTrigger.kill(); t.kill(); } });
+      // Eerst de overflow terugzetten; matchMedia ruimt de tweens en
+      // ScrollTriggers zelf op.
       gsap.utils.toArray(".h-scroll-viewport").forEach(function (vp) { vp.style.overflow = ""; });
+      tweens.forEach(function (t) {
+        if (!t) return;
+        if (t.scrollTrigger) t.scrollTrigger.kill(true);
+        t.kill();
+      });
       gsap.set(".h-scroll-track", { clearProps: "transform" });
     };
   });
