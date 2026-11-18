@@ -273,7 +273,6 @@
       var vp = sec.querySelector(".h-scroll-viewport");
       var track = sec.querySelector(".h-scroll-track");
       if (!vp || !track) return null;
-      vp.style.overflow = "visible";
       var afstand = function () { return Math.max(0, track.scrollWidth - vp.clientWidth); };
       return gsap.to(track, {
         x: function () { return -afstand(); },
@@ -285,9 +284,6 @@
       });
     });
     return function () {
-      // Eerst de overflow terugzetten; matchMedia ruimt de tweens en
-      // ScrollTriggers zelf op.
-      gsap.utils.toArray(".h-scroll-viewport").forEach(function (vp) { vp.style.overflow = ""; });
       tweens.forEach(function (t) {
         if (!t) return;
         if (t.scrollTrigger) t.scrollTrigger.kill(true);

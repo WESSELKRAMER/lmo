@@ -1055,3 +1055,10 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
 }
 .h-scroll-viewport::-webkit-scrollbar { display: none; }
 .bar-fill { width: 0; }
+
+/* Horizontale galerij: op desktop schuift lmo.js de strook (vastgezet),
+   daar mag de viewport niet zelf scrollen. Via CSS in plaats van een
+   inline stijl, zodat het bij wisselen van schermbreedte altijd klopt. */
+@media (min-width: 992px) and (prefers-reduced-motion: no-preference) {
+  .lmo-js .h-scroll-viewport { overflow: visible; }
+}
