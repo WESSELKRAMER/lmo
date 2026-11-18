@@ -1030,3 +1030,28 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   box-decoration-break: slice;
   padding: 0 0.06em;
 }
+
+/* ---------------------------------------------------------------
+   Sections 21–30 (/components): hovers en states
+   --------------------------------------------------------------- */
+.tab-button[aria-selected="true"] {
+  background-color: var(--_kleuren---groen--900, #182a12);
+  border-color: var(--_kleuren---groen--900, #182a12);
+  color: var(--_kleuren---neutraal--wit, #fff);
+}
+.tab-button:focus-visible { outline: 2px solid var(--_kleuren---koraal--500, #f28658); outline-offset: 2px; }
+.tab-panel[hidden] { display: none; }
+
+.bento-photo-card:hover .bento-photo,
+.h-card:hover .h-card-photo,
+.video-poster:hover .video-photo,
+.related-item:hover .related-photo { transform: scale(1.05); }
+.bento-link-card:hover .bento-link-arrow { transform: rotate(45deg); }
+.video-poster:hover .video-play { transform: scale(1.1); }
+.related-item:hover .related-arrow {
+  background-color: var(--_kleuren---koraal--500, #f28658);
+  border-color: var(--_kleuren---koraal--500, #f28658);
+  transform: translateX(0.25rem);
+}
+.h-scroll-viewport::-webkit-scrollbar { display: none; }
+.bar-fill { width: 0; }

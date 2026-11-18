@@ -39,9 +39,11 @@
   var perKlasseBouwstenen = {
     "fade-up": [".statement", ".cta-banner", ".media-block", ".split-hero-content", ".testimonial",
                 ".table-block", ".article-body", ".stats-intro", ".faq-side", ".sticky-split-side",
-                ".image-hero-content", ".stage-hero-content", ".arch-hero-content"],
+                ".image-hero-content", ".stage-hero-content", ".arch-hero-content",
+                ".chart-intro", ".contact-spotlight", ".video-block", ".tabs-header", ".checklist-header"],
     "stagger": [".feature-grid", ".step-list", ".team-grid", ".event-list", ".file-list", ".member-grid",
-                ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion", ".slider-track"]
+                ".route-grid", ".stats-row", ".sticky-split-list", ".milestone-list", ".accordion", ".slider-track",
+                ".bento-grid", ".tier-grid", ".check-grid", ".related-list", ".schedule-list"]
   };
   Object.keys(perKlasse).forEach(function (soort) {
     perKlasse[soort] = perKlasse[soort].concat(perKlasseBouwstenen[soort] || []);
@@ -242,6 +244,51 @@
         scrollTrigger: { trigger: el, start: "top 80%", once: true }
       });
     });
+  });
+
+  /* Staafdiagram (/components 24): elke staaf groeit naar het
+     percentage in .bar-value, één voor één. */
+  var balken = gsap.utils.toArray(".bar-row").map(function (rij) {
+    var vul = rij.querySelector(".bar-fill");
+    var waarde = parseFloat((rij.querySelector(".bar-value") || {}).textContent) || 0;
+    if (vul) vul.style.width = Math.max(0, Math.min(100, waarde)) + "%";
+    return vul;
+  }).filter(Boolean);
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    gsap.utils.toArray(".bar-list").forEach(function (lijst) {
+      gsap.from(lijst.querySelectorAll(".bar-fill"), {
+        scaleX: 0, duration: 1.2, ease: "power3.out", stagger: 0.12,
+        scrollTrigger: { trigger: lijst, start: "top 80%", once: true }
+      });
+    });
+    return function () { gsap.set(balken, { clearProps: "transform" }); };
+  });
+
+  /* Horizontale galerij (/components 23): op desktop zet de section vast
+     en schuiven de kaarten naar links terwijl je verder scrolt. Op
+     tablet en mobiel gewoon horizontaal vegen. */
+  mm.add("(prefers-reduced-motion: no-preference) and (min-width: 992px)", function () {
+    if (!window.ScrollTrigger) return;
+    var tweens = gsap.utils.toArray(".h-scroll").map(function (sec) {
+      var vp = sec.querySelector(".h-scroll-viewport");
+      var track = sec.querySelector(".h-scroll-track");
+      if (!vp || !track) return null;
+      vp.style.overflow = "visible";
+      var afstand = function () { return Math.max(0, track.scrollWidth - vp.clientWidth); };
+      return gsap.to(track, {
+        x: function () { return -afstand(); },
+        ease: "none",
+        scrollTrigger: {
+          trigger: sec, start: "top top", end: function () { return "+=" + afstand(); },
+          pin: true, scrub: 0.6, invalidateOnRefresh: true, anticipatePin: 1
+        }
+      });
+    });
+    return function () {
+      tweens.forEach(function (t) { if (t) { t.scrollTrigger.kill(); t.kill(); } });
+      gsap.utils.toArray(".h-scroll-viewport").forEach(function (vp) { vp.style.overflow = ""; });
+      gsap.set(".h-scroll-track", { clearProps: "transform" });
+    };
   });
 
   /* Thema's en Laatste nieuws: een afbeelding volgt de muis over de lijst
@@ -1048,5 +1095,60 @@ if (document.readyState === 'loading') {
     toon();
     window.addEventListener("resize", function () { meet(); naar(punten[dichtstbij(x)], 0); });
     window.addEventListener("load", function () { meet(); toon(); });
+  });
+})();
+
+
+/* ---------------------------------------------------------------
+   Tabs (/components 22). Markup: .tabs-block met .tabs-list >
+   .tab-button (links) en .tab-panels > .tab-panel, in dezelfde
+   volgorde. Knop n opent paneel n. Pijltjestoetsen wisselen.
+   --------------------------------------------------------------- */
+(function () {
+  document.querySelectorAll(".tabs-block").forEach(function (blok, b) {
+    var knoppen = [].slice.call(blok.querySelectorAll(".tab-button"));
+    var panelen = [].slice.call(blok.querySelectorAll(".tab-panel"));
+    if (!knoppen.length || knoppen.length !== panelen.length) return;
+    var lijst = blok.querySelector(".tabs-list");
+    if (lijst) lijst.setAttribute("role", "tablist");
+    var stil = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    var kies = function (i, focus) {
+      knoppen.forEach(function (k, j) {
+        var aan = i === j;
+        k.setAttribute("aria-selected", aan ? "true" : "false");
+        k.setAttribute("tabindex", aan ? "0" : "-1");
+        panelen[j].hidden = !aan;
+      });
+      if (focus) knoppen[i].focus();
+      var gsap = window.gsap;
+      if (gsap && !stil.matches) {
+        gsap.fromTo(panelen[i].children, { autoAlpha: 0, y: "1rem" },
+          { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.08, overwrite: true, clearProps: "transform,opacity,visibility" });
+      }
+    };
+
+    knoppen.forEach(function (k, i) {
+      var id = "lmo-tab-" + b + "-" + i;
+      k.id = id;
+      k.setAttribute("role", "tab");
+      k.setAttribute("aria-controls", id + "-paneel");
+      panelen[i].id = id + "-paneel";
+      panelen[i].setAttribute("role", "tabpanel");
+      panelen[i].setAttribute("aria-labelledby", id);
+      k.addEventListener("click", function (e) { e.preventDefault(); kies(i, false); });
+      k.addEventListener("keydown", function (e) {
+        var n = knoppen.length;
+        if (e.key === "ArrowRight") { e.preventDefault(); kies((i + 1) % n, true); }
+        else if (e.key === "ArrowLeft") { e.preventDefault(); kies((i - 1 + n) % n, true); }
+        else if (e.key === " ") { e.preventDefault(); kies(i, false); }
+      });
+    });
+    // Zonder animatie bij het laden
+    knoppen.forEach(function (k, j) {
+      k.setAttribute("aria-selected", j === 0 ? "true" : "false");
+      k.setAttribute("tabindex", j === 0 ? "0" : "-1");
+      panelen[j].hidden = j !== 0;
+    });
   });
 })();

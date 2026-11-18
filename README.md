@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.5/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.13.0/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -26,8 +26,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.5/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.12.5/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.13.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.13.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -125,6 +125,16 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 | 18 | Brede foto met onderschrift | `media-block`, `media-badge` |
 | 19 | Twee routes | `route-card is-dark/is-sand` |
 | 20 | Tabel | `data-table`, `data-row is-head`, `data-cell is-number` |
+| 21 | Bento-grid: grote fotokaart, cijfer, link en citaat | `bento-grid`, `bento-photo-card`, `bento-stat-card`, `bento-link-card`, `bento-quote-card` |
+| 22 | Tabs per thema (`lmo.js`): knop n opent paneel n, pijltjestoetsen wisselen | `tabs-list`, `tab-button`, `tab-panels`, `tab-panel` |
+| 23 | Horizontale galerij: op desktop vastgezet en zijwaarts scrollend, mobiel vegen | `h-scroll`, `h-scroll-track`, `h-card` |
+| 24 | Staafdiagram: staven groeien naar het getal in `.bar-value` | `bar-list`, `bar-row`, `bar-value`, `bar-fill` |
+| 25 | Deelnamevormen met checklist, middelste uitgelicht | `tier-grid`, `tier is-featured`, `check-list` |
+| 26 | Dagprogramma met tijden | `schedule`, `schedule-row`, `tag is-workshop` |
+| 27 | Contactpersoon uitgelicht, ronde foto, telefoon en mail | `contact-spotlight`, `contact-line` |
+| 28 | Checklist in twee kolommen op donkergroen | `check-grid`, `check-row` |
+| 29 | Video-poster met afspeelknop (link naar video) | `video-poster`, `video-play` |
+| 30 | Lees ook, lijst met thumbnails | `related-list`, `related-item` |
 
 De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBouwstenen` in `lmo.js`).
 
