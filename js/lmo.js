@@ -599,7 +599,10 @@ if (document.readyState === 'loading') {
 (function () {
   var blok = document.querySelector(".municipalities-block");
   if (!blok) return;
+  // De CMS-lijst mag binnen het blok staan of ergens anders op de pagina
+  // (een Webflow-component kan geen CMS-lijst bevatten).
   var bron = [].slice.call(blok.querySelectorAll(".municipalities-data [data-gemeente]"));
+  if (!bron.length) bron = [].slice.call(document.querySelectorAll(".municipalities-data [data-gemeente]"));
   if (!bron.length) return;
 
   var getal = function (v) { var n = parseFloat(v); return isNaN(n) ? null : n; };
