@@ -234,6 +234,16 @@
     };
   });
 
+  /* Statement: markeerstift trekt regel voor regel over de accenttekst. */
+  mm.add("(prefers-reduced-motion: no-preference)", function () {
+    gsap.utils.toArray(".statement-accent").forEach(function (el) {
+      gsap.fromTo(el, { backgroundSize: "0% 78%" }, {
+        backgroundSize: "100% 78%", duration: 1.6, ease: "power2.inOut", delay: 0.35,
+        scrollTrigger: { trigger: el, start: "top 80%", once: true }
+      });
+    });
+  });
+
   /* Thema's en Laatste nieuws: een afbeelding volgt de muis over de lijst
      (zoals op dennissnellenberg.com/work). De afbeelding schuift verticaal
      naar de foto van het item waar je op staat; een koraal rondje volgt

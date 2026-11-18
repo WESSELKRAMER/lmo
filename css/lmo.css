@@ -1012,3 +1012,21 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   .milestone::before,
   .milestone::after { left: calc(0.75rem - 1px); top: 1.625rem; bottom: 0.125rem; }
 }
+
+/* ---------------------------------------------------------------
+   Statement (/components 03): markeerstift achter .statement-accent.
+   De achtergrond loopt als één doorlopende strook over de regels
+   (box-decoration-break: slice), dus als lmo.js de breedte van 0 naar
+   100% laat groeien, kleurt hij regel voor regel in. Zonder JS of bij
+   "minder beweging" staat de markering er meteen.
+   --------------------------------------------------------------- */
+.statement-accent {
+  color: var(--_kleuren---koraal--800, #7a2e04);
+  background-image: linear-gradient(var(--_kleuren---koraal--100, #fed9ca), var(--_kleuren---koraal--100, #fed9ca));
+  background-repeat: no-repeat;
+  background-position: 0 70%;
+  background-size: 100% 78%;
+  -webkit-box-decoration-break: slice;
+  box-decoration-break: slice;
+  padding: 0 0.06em;
+}
