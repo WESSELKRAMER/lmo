@@ -167,66 +167,6 @@
     return function () { getallen.forEach(function (g) { g[0].textContent = g[1]; }); };
   });
 
-  /* Golven (hero-onderkant en footer-bovenkant): één keer een zachte golf
-     door de lijn als hij in beeld komt. Alleen de curvepunten (C) bewegen;
-     de rechte randen blijven staan. De uitslag zwelt aan en dooft uit,
-     dus de vorm eindigt precies zoals hij in Webflow staat. */
-  mm.add("(prefers-reduced-motion: no-preference)", function () {
-    var golven = gsap.utils.toArray(".hero-wave path, .footer-wave path");
-    var tweens = [];
-    golven.forEach(function (pad) {
-      var origineel = pad.getAttribute("d");
-      var vb = pad.ownerSVGElement && pad.ownerSVGElement.viewBox.baseVal;
-      var breedte = (vb && vb.width) || 1440;
-      var hoogte = (vb && vb.height) || 160;
-      var amplitude = hoogte * 0.045;  // ± 7 van 160: subtiel
-
-      // Splits in stukken: commando's blijven tekst, coördinaten worden getallen.
-      var stukken = origineel.match(/[A-Za-z]|-?\d*\.?\d+(?:e-?\d+)?/g);
-      var buig = function (t) {
-        var omhulling = Math.sin(Math.PI * t);                // 0 → 1 → 0
-        var fase = t * Math.PI * 2;                            // één lange golf schuift van links naar rechts
-        var verschuif = function (x) {
-          return amplitude * omhulling * Math.sin((x / breedte) * Math.PI * 2 - fase);
-        };
-        // Elk punt van de lijn beweegt mee (ankers én handvatten, ook het
-        // begin- en eindpunt), zodat de golf één doorlopend geheel blijft.
-        // Alleen de onderrand (V tot onderaan, H) blijft staan.
-        var uit = [], cmd = "", n = 0, x = 0;
-        for (var i = 0; i < stukken.length; i++) {
-          var st = stukken[i];
-          if (/[A-Za-z]/.test(st)) { cmd = st.toUpperCase(); n = 0; uit.push(st); continue; }
-          var v = parseFloat(st);
-          if (cmd === "M" || cmd === "C" || cmd === "L") {
-            if (n % 2 === 0) x = v;
-            else v += verschuif(x);
-          } else if (cmd === "H") {
-            x = v;
-          } else if (cmd === "V") {
-            if (v < hoogte * 0.98) v += verschuif(x);
-          }
-          uit.push(Math.round(v * 100) / 100);
-          n++;
-        }
-        return uit.join(" ");
-      };
-
-      var staat = { t: 0 };
-      var tw = gsap.to(staat, {
-        t: 1,
-        duration: 2.6,
-        ease: "sine.inOut",
-        onUpdate: function () { pad.setAttribute("d", buig(staat.t)); },
-        onComplete: function () { pad.setAttribute("d", origineel); },
-        scrollTrigger: { trigger: pad.closest(".hero-wave, .footer-wave"), start: "top 95%", once: true }
-      });
-      tweens.push([tw, pad, origineel]);
-    });
-    return function () {
-      tweens.forEach(function (x) { x[0].kill(); x[1].setAttribute("d", x[2]); });
-    };
-  });
-
   /* Thema's en Laatste nieuws: een afbeelding volgt de muis over de lijst
      (zoals op dennissnellenberg.com/work). De afbeelding schuift verticaal
      naar de foto van het item waar je op staat; een koraal rondje volgt
