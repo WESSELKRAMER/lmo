@@ -302,10 +302,15 @@
     window.addEventListener("mousemove", volg, { passive: true });
     window.addEventListener("scroll", check, { passive: true });
     document.documentElement.addEventListener("mouseleave", weg);
+    // Lenis geeft tijdens smooth scroll niet elke frame een scroll-event;
+    // daarom zolang het beeld zichtbaar is elke frame opnieuw kijken.
+    var tik = function () { if (binnen) check(); };
+    gsap.ticker.add(tik);
 
     return function () {
       window.removeEventListener("mousemove", volg);
       window.removeEventListener("scroll", check);
+      gsap.ticker.remove(tik);
       document.documentElement.removeEventListener("mouseleave", weg);
       beeld.remove();
       rondje.remove();
