@@ -1362,7 +1362,7 @@ function lmoTransitieMarkup() {
   wrap.innerHTML =
     '<div data-transition-panel class="transition__panel">' +
       '<span data-transition-label class="transition__label">' +
-        '<span>[ </span><span data-transition-label-text>Welkom</span><span> ]</span>' +
+        '<span data-transition-label-text>Welkom</span>' +
       "</span>" +
     "</div>";
   document.body.appendChild(wrap);

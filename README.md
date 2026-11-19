@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.2/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.3/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -29,8 +29,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 <script src="https://cdn.prod.website-files.com/gsap/3.15.0/CustomEase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3/dist/barba.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.2/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.2/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.3/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.3/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -144,7 +144,7 @@ De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBou
 
 ## Paginawissels (Barba)
 
-Interne links laden zonder herladen via [Barba](https://barba.js.org) met de Osmo-transitie *Page Name Transition (Wipe)*: een donkergroen paneel schuift omhoog met de naam van de volgende pagina (`[ PRAKTIJKVOORBEELDEN ]`), daarna komt de nieuwe pagina eronder vandaan.
+Interne links laden zonder herladen via [Barba](https://barba.js.org) met de Osmo-transitie *Page Name Transition (Wipe)*: een donkergroen paneel schuift omhoog met de naam van de volgende pagina in de H2-stijl ("Praktijkvoorbeelden"), daarna komt de nieuwe pagina eronder vandaan.
 
 - **In Webflow:** op elke pagina staat op `<main>` `data-barba="container"` en `data-page-name="Naam"` (Element settings › Custom attributes). Nieuwe pagina's: dezelfde twee attributen toevoegen, anders laadt die pagina gewoon. Zonder `data-page-name` gebruikt het label de h1.
 - **De nav** staat buiten `<main>` en blijft staan; de actieve nav-link wordt bijgewerkt. **De footer** staat binnen `<main>` (laatste element) en wisselt mee met de pagina.

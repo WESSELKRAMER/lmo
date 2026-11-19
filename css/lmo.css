@@ -1126,15 +1126,19 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   top: 100%;
   left: 0;
 }
+/* Label in de H2-stijl van de site (wit op donkergroen, zoals .h2.is-light). */
 .transition__label {
-  color: var(--_kleuren---koraal--500, #f28658);
-  text-transform: uppercase;
-  font-family: var(--_typografie---font--mono, "Google Sans Code", monospace);
-  font-size: clamp(1.25rem, 2.2vw, 2.25rem);
+  color: var(--_kleuren---neutraal--wit, #fff);
+  font-family: var(--_typografie---font--sans, "Google Sans Flex", Arial, sans-serif);
+  font-size: var(--_typografie---grootte--h2, 3.25rem);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
   text-align: center;
   padding: 0 1.25rem;
+}
+@media (max-width: 767px) {
+  .transition__label { font-size: 2.25rem; }
 }
 /* De nieuwe <main> krijgt tijdens de wissel tabindex=-1 voor de focus;
    geen focusring op het hele blok. */
