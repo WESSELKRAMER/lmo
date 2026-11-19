@@ -349,8 +349,8 @@
     var q = invoer.value.trim();
     // Alleen een expliciet met de pijltjes gekozen optie volgen; anders zoeken.
     var o = opties[actief];
-    if (o && o.dataset.gekozen === "1") { window.location.href = o.getAttribute("href"); return; }
-    if (q) window.location.href = zoekUrl(q);
+    if (o && o.dataset.gekozen === "1") { ga(o.getAttribute("href")); return; }
+    if (q) ga(zoekUrl(q));
   }
 
   function vulVeelGezocht() {
@@ -427,6 +427,7 @@
 
   function initOverlay() {
     bouwOverlay();
+    if (window.LMO) window.LMO.sluitZoeken = sluit;  // lmo.js sluit het paneel bij een paginawissel
     // Met pijltjes gekozen opties volgen bij Enter; muis-hover niet.
     invoer.addEventListener("keydown", function (e) {
       if ((e.key === "ArrowDown" || e.key === "ArrowUp") && opties[actief]) {
@@ -487,7 +488,7 @@
         e.preventDefault();
         e.stopImmediatePropagation();
         var q = veld ? veld.value.trim() : "";
-        window.location.href = q ? zoekUrl(q) : ZOEKPAGINA;
+        ga(q ? zoekUrl(q) : ZOEKPAGINA);
       };
       form.addEventListener("submit", stuur, true);
       if (veld) veld.addEventListener("keydown", function (e) { if (e.key === "Enter") stuur(e); });
@@ -737,11 +738,24 @@
 
   /* ---------- start ---------- */
 
-  function start() {
+  // Naar een pagina: met Barba (lmo.js) als dat draait, anders gewoon.
+  function ga(url) {
+    if (window.LMO && window.LMO.ga) window.LMO.ga(url);
+    else window.location.href = url;
+  }
+
+  // Overlay één keer (zit in de nav); hero-zoekveld, tags en de
+  // resultatenpagina per pagina. Met lmo.js gaat dat via LMO.naWissel,
+  // zodat het na elke Barba-paginawissel opnieuw draait.
+  function perPagina() {
     initKoppelingen();
-    initOverlay();
     initResultaten();
   }
+  function start() {
+    initOverlay();
+    if (!(window.LMO && window.LMO.naWissel)) perPagina();
+  }
+  if (window.LMO && window.LMO.naWissel) window.LMO.naWissel(perPagina);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else start();
 })();

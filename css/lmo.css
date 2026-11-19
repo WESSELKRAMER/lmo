@@ -1104,66 +1104,38 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
 }
 
 /* ---------------------------------------------------------------
-   Page loader. Een rustig donkergroen vlak met een dun koraal
-   streepje dat heen en weer loopt. Het staat er vanaf de eerste
-   paint (pure CSS op body, dus geen flits van de pagina) en lmo.js
-   zet html.lmo-geladen zodra de pagina klaar is; dan vervaagt het.
-   Bij interne links komt het vlak kort terug voor de volgende pagina.
-   - Zonder JS verdwijnt het vanzelf na 2,5 s (lmoLoaderNood).
-   - Bij "minder beweging" is er geen loader.
+   Paginawissel (Barba) — Osmo Supply "Page Name Transition (Wipe)".
+   lmo.js maakt het element [data-transition-wrap] één keer aan in de
+   body. Kleuren in LMO-stijl: donkergroen paneel, koraal label.
    --------------------------------------------------------------- */
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  z-index: 10000;
+.transition {
+  z-index: 9000;
   pointer-events: none;
-  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
-}
-body::before {
+  position: fixed;
   inset: 0;
+  overflow: clip;
+}
+.transition__panel {
   background-color: var(--_kleuren---groen--900, #182a12);
-  animation: lmoLoaderNood 0.4s ease 2.5s forwards;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 100%;
+  left: 0;
 }
-body::after {
-  left: 50%;
-  top: 50%;
-  width: 4.5rem;
-  height: 2px;
-  margin-left: -2.25rem;
-  border-radius: 2px;
-  background-color: rgba(240, 238, 229, 0.18);
-  background-image: linear-gradient(90deg, transparent 0%, var(--_kleuren---koraal--500, #f28658) 0%, var(--_kleuren---koraal--500, #f28658) 40%, transparent 40%);
-  background-size: 250% 100%;
-  background-repeat: no-repeat;
-  animation: lmoLoaderLijn 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate, lmoLoaderNood 0.4s ease 2.5s forwards;
+.transition__label {
+  color: var(--_kleuren---koraal--500, #f28658);
+  text-transform: uppercase;
+  font-family: var(--_typografie---font--mono, "Google Sans Code", monospace);
+  font-size: clamp(1.25rem, 2.2vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 0 1.25rem;
 }
-html.lmo-geladen body::before,
-html.lmo-geladen body::after {
-  opacity: 0;
-  visibility: hidden;
-}
-html.lmo-vertrek body::before,
-html.lmo-vertrek body::after {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease, visibility 0s;
-}
-@keyframes lmoLoaderLijn {
-  from { background-position: 100% 0; }
-  to { background-position: 0% 0; }
-}
-@keyframes lmoLoaderNood {
-  to { opacity: 0; visibility: hidden; }
-}
-html.lmo-geladen body::before,
-html.lmo-geladen body::after,
-html.lmo-vertrek body::before,
-html.lmo-vertrek body::after { animation-name: none; }
-html.lmo-vertrek body::after { animation: lmoLoaderLijn 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate; }
-@media (prefers-reduced-motion: reduce) {
-  body::before, body::after { display: none; }
-}
-/* Niet in de Webflow Designer/editor tonen */
-html.w-editor body::before, html.w-editor body::after,
-html.wf-design-mode body::before, html.wf-design-mode body::after { display: none; }
+/* De nieuwe <main> krijgt tijdens de wissel tabindex=-1 voor de focus;
+   geen focusring op het hele blok. */
+[data-barba="container"]:focus { outline: none; }

@@ -13,19 +13,69 @@
    bij een open menu: lmoLenis.stop() / lmoLenis.start().
    Een element dat zelf scrolt krijgt data-lenis-prevent. */
 
-(function start() {
-  // GSAP komt uit Webflow (Site settings › GSAP). Is het er nog niet als dit
-  // script draait, dan wachten we tot de pagina geladen is.
-  if (!window.gsap) {
-    if (!start.wacht) { start.wacht = true; window.addEventListener("load", start); }
-    else console.warn("[lmo] GSAP niet geladen");
-    return;
-  }
+/* ---------------------------------------------------------------
+   Opbouw. Barba wisselt alleen <main data-barba="container">; nav en
+   footer blijven staan. Daarom:
+   - LMO.eenmalig(fn)  draait één keer (nav, mobiel menu, Lenis).
+   - LMO.pagina(fn)    draait per pagina met root = de nieuwe <main>
+                       (bij de eerste keer document) en mag een
+                       opruimfunctie teruggeven; die draait als de
+                       pagina weg is.
+   - LMO.naWissel(fn)  draait als de nieuwe pagina staat en de oude weg
+                       is (voor code die het hele document doorzoekt).
+   --------------------------------------------------------------- */
+var LMO = window.LMO = window.LMO || {};
+LMO.teller = 0;
+LMO._eenmalig = [];
+LMO._pagina = [];
+LMO._naWissel = [];
+LMO.eenmalig = function (fn) { LMO._eenmalig.push(fn); };
+LMO.pagina = function (fn) { LMO._pagina.push(fn); };
+LMO.naWissel = function (fn) { LMO._naWissel.push(fn); };
+LMO._veilig = function (fn, arg) {
+  try { return fn(arg); } catch (err) { console.error("[lmo] " + (fn.name || "module"), err); }
+};
+// Start alle paginamodules voor een container; geeft één opruimfunctie terug.
+LMO.startPagina = function (root) {
+  var opruim = LMO._pagina.map(function (fn) { return LMO._veilig(fn, root); })
+    .filter(function (f) { return typeof f === "function"; });
+  return function () { opruim.forEach(function (f) { LMO._veilig(f); }); };
+};
+// Naar een andere pagina: via Barba als dat er is, anders gewoon.
+LMO.ga = function (url) {
+  if (window.barba && LMO.barbaActief) window.barba.go(url);
+  else window.location.href = url;
+};
 
+
+LMO.eenmalig(function lenis() {
   var gsap = window.gsap;
-  if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
+  gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", function () {
+    if (window.Lenis) {
+      var lenis = new window.Lenis({ autoRaf: false });
+      var tick = function (tijd) { lenis.raf(tijd * 1000); };
+      if (window.ScrollTrigger) lenis.on("scroll", window.ScrollTrigger.update);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+      window.lmoLenis = lenis;
 
-  document.documentElement.classList.add("lmo-js");
+      // Opruimen als de gebruiker alsnog 'minder beweging' aanzet.
+      return function () {
+        gsap.ticker.remove(tick);
+        lenis.destroy();
+        window.lmoLenis = null;
+      };
+    }
+  });
+  // ScrollTrigger meet zelf opnieuw bij resize; na het laden van afbeeldingen
+  // verschuiven posities nog, dus dan één keer extra meten.
+  if (window.ScrollTrigger) {
+    window.addEventListener("load", function () { window.ScrollTrigger.refresh(); });
+  }
+});
+
+
+LMO.pagina(function animaties(root) {
 
   // Animaties per Webflow-klasse. Werkt hetzelfde als het attribute in de
   // Designer zetten; handig voor terugkerende onderdelen.
@@ -49,7 +99,7 @@
     perKlasse[soort] = perKlasse[soort].concat(perKlasseBouwstenen[soort] || []);
   });
   Object.keys(perKlasse).forEach(function (soort) {
-    document.querySelectorAll(perKlasse[soort].join(",")).forEach(function (el) {
+    root.querySelectorAll(perKlasse[soort].join(",")).forEach(function (el) {
       if (soort === "stagger") el.setAttribute("data-lmo-stagger", "");
       else if (!el.hasAttribute("data-lmo")) el.setAttribute("data-lmo", soort);
     });
@@ -64,36 +114,19 @@
     }, vars));
   }
 
+  var gsap = window.gsap;
   var mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    if (window.Lenis) {
-      var lenis = new window.Lenis({ autoRaf: false });
-      var tick = function (tijd) { lenis.raf(tijd * 1000); };
-      if (window.ScrollTrigger) lenis.on("scroll", window.ScrollTrigger.update);
-      gsap.ticker.add(tick);
-      gsap.ticker.lagSmoothing(0);
-      window.lmoLenis = lenis;
-
-      // Opruimen als de gebruiker alsnog 'minder beweging' aanzet.
-      return function () {
-        gsap.ticker.remove(tick);
-        lenis.destroy();
-        window.lmoLenis = null;
-      };
-    }
-  });
-
-  mm.add("(prefers-reduced-motion: no-preference)", function () {
-    gsap.utils.toArray('[data-lmo="fade-up"]').forEach(function (el) {
+    gsap.utils.toArray('[data-lmo="fade-up"]', root).forEach(function (el) {
       inBeeld(el, { y: "2rem" });
     });
 
-    gsap.utils.toArray('[data-lmo="fade"]').forEach(function (el) {
+    gsap.utils.toArray('[data-lmo="fade"]', root).forEach(function (el) {
       inBeeld(el, {});
     });
 
-    gsap.utils.toArray("[data-lmo-stagger]").forEach(function (lijst) {
+    gsap.utils.toArray("[data-lmo-stagger]", root).forEach(function (lijst) {
       gsap.from(lijst.children, {
         autoAlpha: 0,
         y: "1.5rem",
@@ -110,9 +143,9 @@
      Raster 2×2: boog linksboven, cirkel rechtsboven, blad linksonder,
      kwart rechtsonder. Stapt alleen als de hero in beeld is. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    var raster = document.querySelector(".shapes");
+    var raster = root.querySelector(".shapes");
     if (!raster) return;
-    var vormen = gsap.utils.toArray(".shapes > .shape");
+    var vormen = gsap.utils.toArray(".shapes > .shape", root);
     if (vormen.length !== 4) return;
 
     // vakken met de klok mee: 0 linksboven, 1 rechtsboven, 2 rechtsonder, 3 linksonder
@@ -139,7 +172,7 @@
     tl.set({}, {}, 10);  // 4 stappen × 2,5 s, daarna naadloos opnieuw (360° = 0°)
 
     var st = window.ScrollTrigger && window.ScrollTrigger.create({
-      trigger: ".hero",
+      trigger: root.querySelector(".hero") || raster,
       start: "top bottom",
       end: "bottom top",
       onToggle: function (self) { self.isActive ? tl.play() : tl.pause(); }
@@ -161,7 +194,7 @@
      "20 mei" blijft staan). De echte waarde staat in de HTML. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
     var getallen = [];
-    gsap.utils.toArray(".figure").forEach(function (el) {
+    gsap.utils.toArray(".figure", root).forEach(function (el) {
       var tekst = el.textContent.trim();
       if (!/^\d+$/.test(tekst)) return;
       var doel = parseInt(tekst, 10);
@@ -185,7 +218,7 @@
        iets langzamer mee (parallax).
      - 02D: koraal cirkel groeit, infokaart schuift omhoog. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    gsap.utils.toArray(".image-hero").forEach(function (hero) {
+    gsap.utils.toArray(".image-hero", root).forEach(function (hero) {
       var foto = hero.querySelector(".image-hero-photo");
       if (!foto) return;
       gsap.fromTo(foto, { scale: 1.12 }, { scale: 1, duration: 1.8, ease: "power2.out" });
@@ -194,7 +227,7 @@
           scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true } });
       }
     });
-    gsap.utils.toArray(".arch-hero-visual").forEach(function (v) {
+    gsap.utils.toArray(".arch-hero-visual", root).forEach(function (v) {
       var st = { trigger: v, start: "top 85%", once: true };
       var cirkel = v.querySelector(".arch-hero-circle");
       var kaart = v.querySelector(".arch-hero-card");
@@ -209,7 +242,7 @@
      gepasseerd zijn krijgen een koraal rand. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
     if (!window.ScrollTrigger) return;
-    var triggers = gsap.utils.toArray(".milestone-list").map(function (lijst) {
+    var triggers = gsap.utils.toArray(".milestone-list", root).map(function (lijst) {
       var stukken = [].slice.call(lijst.querySelectorAll(".milestone"));
       if (stukken.length < 2) return null;
       var n = stukken.length - 1;
@@ -229,7 +262,7 @@
     });
     return function () {
       triggers.forEach(function (t) { if (t) t.kill(); });
-      document.querySelectorAll(".milestone").forEach(function (m) {
+      root.querySelectorAll(".milestone").forEach(function (m) {
         m.style.removeProperty("--fill");
         m.classList.remove("is-passed");
       });
@@ -238,7 +271,7 @@
 
   /* Statement: markeerstift trekt regel voor regel over de accenttekst. */
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    gsap.utils.toArray(".statement-accent").forEach(function (el) {
+    gsap.utils.toArray(".statement-accent", root).forEach(function (el) {
       gsap.fromTo(el, { backgroundSize: "0% 78%" }, {
         backgroundSize: "100% 78%", duration: 1.6, ease: "power2.inOut", delay: 0.35,
         scrollTrigger: { trigger: el, start: "top 80%", once: true }
@@ -248,14 +281,14 @@
 
   /* Staafdiagram (/components 24): elke staaf groeit naar het
      percentage in .bar-value, één voor één. */
-  var balken = gsap.utils.toArray(".bar-row").map(function (rij) {
+  var balken = gsap.utils.toArray(".bar-row", root).map(function (rij) {
     var vul = rij.querySelector(".bar-fill");
     var waarde = parseFloat((rij.querySelector(".bar-value") || {}).textContent) || 0;
     if (vul) vul.style.width = Math.max(0, Math.min(100, waarde)) + "%";
     return vul;
   }).filter(Boolean);
   mm.add("(prefers-reduced-motion: no-preference)", function () {
-    gsap.utils.toArray(".bar-list").forEach(function (lijst) {
+    gsap.utils.toArray(".bar-list", root).forEach(function (lijst) {
       gsap.from(lijst.querySelectorAll(".bar-fill"), {
         scaleX: 0, duration: 1.2, ease: "power3.out", stagger: 0.12,
         scrollTrigger: { trigger: lijst, start: "top 80%", once: true }
@@ -269,7 +302,7 @@
      tablet en mobiel gewoon horizontaal vegen. */
   mm.add("(prefers-reduced-motion: no-preference) and (min-width: 992px)", function () {
     if (!window.ScrollTrigger) return;
-    var tweens = gsap.utils.toArray(".h-scroll").map(function (sec) {
+    var tweens = gsap.utils.toArray(".h-scroll", root).map(function (sec) {
       var vp = sec.querySelector(".h-scroll-viewport");
       var track = sec.querySelector(".h-scroll-track");
       if (!vp || !track) return null;
@@ -289,7 +322,7 @@
         if (t.scrollTrigger) t.scrollTrigger.kill(true);
         t.kill();
       });
-      gsap.set(".h-scroll-track", { clearProps: "transform" });
+      gsap.set(gsap.utils.toArray(".h-scroll-track", root), { clearProps: "transform" });
     };
   });
 
@@ -300,11 +333,11 @@
      Foto per item: data-image op het item (later uit het CMS);
      zonder data-image vallen we terug op de foto's van de site. */
   var lijstPreview = function (lijstSel, itemSel, label, start) {
-    var lijst = document.querySelector(lijstSel);
+    var lijst = root.querySelector(lijstSel);
     var items = lijst ? [].slice.call(lijst.querySelectorAll(itemSel)) : [];
     if (!items.length) return;
 
-    var reserve = [].slice.call(document.querySelectorAll(".practice-card-photo, .image-text-photo"))
+    var reserve = [].slice.call(root.querySelectorAll(".practice-card-photo, .image-text-photo"))
       .map(function (img) { return img.currentSrc || img.src; })
       .filter(function (src, i, a) { return src && a.indexOf(src) === i; });
     var fotos = items.map(function (it, i) {
@@ -394,18 +427,13 @@
     return function () { opruimen.forEach(function (f) { if (f) f(); }); };
   });
 
-  // ScrollTrigger meet zelf opnieuw bij resize; na het laden van afbeeldingen
-  // verschuiven posities nog, dus dan één keer extra meten.
-  if (window.ScrollTrigger) {
-    window.addEventListener("load", function () { window.ScrollTrigger.refresh(); });
-  }
-})();
-
+  return function () { mm.revert(); };
+});
 
 /* ---------------------------------------------------------------
    Nav-items: tekst in een rol-span (rolt bij hover omhoog). CSS in lmo.css.
    --------------------------------------------------------------- */
-(function () {
+LMO.eenmalig(function navRoll() {
   document.querySelectorAll(".nav-link").forEach(function (link) {
     if (link.querySelector(".nav-roll") || link.children.length) return;
     var tekst = link.textContent.trim();
@@ -413,15 +441,14 @@
     link.innerHTML = '<span class="nav-roll"><span class="nav-roll-text"></span></span>';
     link.querySelector(".nav-roll-text").textContent = tekst;
   });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    Knoppen: tekst in een rol-span (rolt bij hover omhoog) en een
    tweede pijl die bij hover van links binnenschuift. CSS in lmo.css.
    --------------------------------------------------------------- */
-(function () {
-  document.querySelectorAll(".button").forEach(function (knop) {
+LMO.pagina(function knoppen(root) {
+  root.querySelectorAll(".button").forEach(function (knop) {
     var pil = knop.querySelector(".button-pill");
     if (pil && pil.children.length === 0 && pil.textContent.trim()) {
       var rol = document.createElement("span");
@@ -441,8 +468,7 @@
       pijl.parentNode.appendChild(kopie);
     }
   });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    Download-icoon in de praktijkkaarten (Figma: Praktijkvoorbeeld-kaart
@@ -450,13 +476,13 @@
    De pijl komt in een groep met een kopie erboven, afgesneden boven de
    bak (clipPath 18 × 11,5). CSS in lmo.css.
    --------------------------------------------------------------- */
-(function () {
+LMO.pagina(function downloadIcoon(root) {
   var NS = "http://www.w3.org/2000/svg";
-  document.querySelectorAll(".practice-card .download svg").forEach(function (svg, i) {
+  root.querySelectorAll(".practice-card .download svg").forEach(function (svg) {
     var paden = svg.querySelectorAll("path");
     if (paden.length !== 2 || svg.querySelector(".download-arrows")) return;
     var pijl = paden[1];
-    var id = "lmo-dl-clip-" + i;
+    var id = "lmo-dl-clip-" + (++LMO.teller);
 
     var defs = document.createElementNS(NS, "defs");
     var clip = document.createElementNS(NS, "clipPath");
@@ -480,17 +506,16 @@
     svg.insertBefore(defs, svg.firstChild);
     svg.appendChild(masker);
   });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    Lijsten (thema's en nieuws): koppelen aan de Directional List Hover
    hieronder. Webflow-markup blijft zoals hij is; attributen en tegels
    komen hier.
    --------------------------------------------------------------- */
-(function () {
+LMO.pagina(function lijsten(root) {
   [[".theme-list", ".theme-row"], [".timeline", ".news-item"]].forEach(function (paar) {
-    document.querySelectorAll(paar[0]).forEach(function (lijst) {
+    root.querySelectorAll(paar[0]).forEach(function (lijst) {
       lijst.setAttribute("data-directional-hover", "");
       lijst.setAttribute("data-type", "y");
       lijst.querySelectorAll(paar[1]).forEach(function (rij) {
@@ -504,15 +529,14 @@
       });
     });
   });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    Tekstlinks: tweede pijl vóór het label; bij hover wisselt de pijl
    van rechts naar links (Figma: Tekstlink › Hover).
    --------------------------------------------------------------- */
-(function () {
-  document.querySelectorAll(".text-link").forEach(function (link) {
+LMO.pagina(function tekstlinks(root) {
+  root.querySelectorAll(".text-link").forEach(function (link) {
     var pijl = link.querySelector(".text-link-arrow");
     if (!pijl || link.querySelector(".text-link-arrow.is-before")) return;
     var voor = pijl.cloneNode(true);
@@ -520,7 +544,7 @@
     voor.setAttribute("aria-hidden", "true");
     link.insertBefore(voor, link.firstChild);
   });
-})();
+});
 /* ---------------------------------------------------------------
    Directional List Hover — Osmo Supply (ongewijzigd overgenomen)
    --------------------------------------------------------------- */
@@ -577,16 +601,6 @@ function initDirectionalListHover() {
   });
 }
 
-// Initialize Directional List Hover
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initDirectionalListHover();
-  });
-} else {
-  initDirectionalListHover();
-}
-
-
 /* ---------------------------------------------------------------
    Gemeenten (homepage) — kaart, chips en kaartje uit het CMS.
    Webflow: een verborgen collectielijst .gemeenten-data met per item
@@ -596,15 +610,16 @@ if (document.readyState === 'loading') {
    telt mee in "+ … gemeenten". Zonder CMS-data blijft de statische
    versie uit Webflow staan.
    --------------------------------------------------------------- */
-(function () {
-  var blok = document.querySelector(".municipalities-block");
+LMO.pagina(function gemeentenKaart(root) {
+  var blok = root.querySelector(".municipalities-block");
   if (!blok) return;
   // De CMS-lijst mag binnen het blok staan of ergens anders op de pagina
   // (een Webflow-component kan geen CMS-lijst bevatten). Staat hij niet op
   // deze pagina (bijv. /gemeenten), dan halen we hem van de homepage.
   var zoek = function (root) { return [].slice.call(root.querySelectorAll(".municipalities-data [data-gemeente]")); };
   var bron = zoek(blok);
-  if (!bron.length) bron = zoek(document);
+  if (!bron.length) bron = zoek(root);
+  if (!bron.length && root !== document) bron = zoek(document);
   if (bron.length) { lmoBouwKaart(blok, bron); return; }
   if (!window.fetch || !window.DOMParser) return;
   fetch("/", { credentials: "same-origin" })
@@ -614,7 +629,7 @@ if (document.readyState === 'loading') {
       if (lijst.length) lmoBouwKaart(blok, lijst);
     })
     .catch(function () {});
-})();
+});
 
 function lmoBouwKaart(blok, bron) {
 
@@ -757,8 +772,6 @@ function lmoBouwKaart(blok, bron) {
   kies(opKaart[0], false);
 }
 
-
-
 /* ---------------------------------------------------------------
    Mobiel menu (Figma: "Mobiel menu – open"). De Menu-knop in de nav
    opent een donkergroen paneel met zoekveld, de nav-links genummerd
@@ -766,7 +779,7 @@ function lmoBouwKaart(blok, bron) {
    De links komen uit .nav-menu, dus aanpassen in de Nav-component
    werkt hier vanzelf door.
    --------------------------------------------------------------- */
-(function () {
+LMO.eenmalig(function mobielMenu() {
   var knop = document.querySelector(".nav .menu-button");
   var links = [].slice.call(document.querySelectorAll(".nav .nav-menu a"));
   if (!knop || !links.length) return;
@@ -912,10 +925,11 @@ function lmoBouwKaart(blok, bron) {
     var a = e.target.closest("a");
     if (a) sluit(false);  // naar een link of anker: menu dicht
   });
+  LMO.sluitMenu = function () { sluit(false); };  // bij een paginawissel (Barba)
   paneel.querySelector("form").addEventListener("submit", function (e) {
     e.preventDefault();
     var q = paneel.querySelector("input").value.trim();
-    window.location.href = q ? "/zoeken?q=" + encodeURIComponent(q) : "/zoeken";
+    LMO.ga(q ? "/zoeken?q=" + encodeURIComponent(q) : "/zoeken");
   });
 
   document.addEventListener("keydown", function (e) {
@@ -930,8 +944,7 @@ function lmoBouwKaart(blok, bron) {
 
   // Naar desktopbreedte: menu dicht.
   window.matchMedia("(min-width: 992px)").addEventListener("change", function (m) { if (m.matches) sluit(false); });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    Accordeon (/components, sectie Veelgestelde vragen).
@@ -940,17 +953,17 @@ function lmoBouwKaart(blok, bron) {
    Het script maakt de trigger een knop (toetsenbord, aria) en klapt het
    paneel open met GSAP. Zonder JS staan alle antwoorden open.
    --------------------------------------------------------------- */
-(function () {
-  var items = document.querySelectorAll(".accordion-item");
+LMO.pagina(function accordeon(root) {
+  var items = root.querySelectorAll(".accordion-item");
   if (!items.length) return;
   document.documentElement.classList.add("lmo-accordion");
   var stil = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  items.forEach(function (item, i) {
+  items.forEach(function (item) {
     var knop = item.querySelector(".accordion-trigger");
     var paneel = item.querySelector(".accordion-panel");
     if (!knop || !paneel) return;
-    var id = "lmo-accordeon-" + i;
+    var id = "lmo-accordeon-" + (++LMO.teller);
     paneel.id = id;
     paneel.setAttribute("role", "region");
     paneel.hidden = true;
@@ -979,8 +992,7 @@ function lmoBouwKaart(blok, bron) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); wissel(); }
     });
   });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    Slider (/components, sectie 12B). Alleen GSAP, geen plugin.
@@ -992,12 +1004,14 @@ function lmoBouwKaart(blok, bron) {
    - Pijltjestoetsen werken als de focus in de slider staat.
    - Na slepen wordt een klik op een link in de kaart genegeerd.
    --------------------------------------------------------------- */
-(function () {
+LMO.pagina(function slider(root) {
   var gsap = window.gsap;
   if (!gsap) return;
+  var opruim = [];
+  var luister = function (doel, type, fn) { doel.addEventListener(type, fn); opruim.push(function () { doel.removeEventListener(type, fn); }); };
   var stil = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  document.querySelectorAll(".slider-viewport").forEach(function (viewport) {
+  root.querySelectorAll(".slider-viewport").forEach(function (viewport) {
     var track = viewport.querySelector(".slider-track");
     if (!track || track.children.length < 2) return;
     var blok = viewport.closest("section") || viewport.parentElement;
@@ -1072,7 +1086,7 @@ function lmoBouwKaart(blok, bron) {
       sleep = { start: e.clientX, startY: e.clientY, x: x, t: performance.now(), laatst: e.clientX, v: 0, actief: false, id: e.pointerId };
       gesleept = false;
     });
-    window.addEventListener("pointermove", function (e) {
+    luister(window, "pointermove", function (e) {
       if (!sleep || e.pointerId !== sleep.id) return;
       var dx = e.clientX - sleep.start;
       if (!sleep.actief) {
@@ -1102,8 +1116,8 @@ function lmoBouwKaart(blok, bron) {
       if (!actief) return;
       naar(punten[dichtstbij(x - v * 250)], 0.7);  // doorglijden met de sleepsnelheid
     };
-    window.addEventListener("pointerup", los);
-    window.addEventListener("pointercancel", los);
+    luister(window, "pointerup", los);
+    luister(window, "pointercancel", los);
     track.addEventListener("click", function (e) {
       if (gesleept) { e.preventDefault(); e.stopPropagation(); gesleept = false; }
     }, true);
@@ -1111,19 +1125,20 @@ function lmoBouwKaart(blok, bron) {
 
     meet();
     toon();
-    window.addEventListener("resize", function () { meet(); naar(punten[dichtstbij(x)], 0); });
-    window.addEventListener("load", function () { meet(); toon(); });
+    luister(window, "resize", function () { meet(); naar(punten[dichtstbij(x)], 0); });
+    luister(window, "load", function () { meet(); toon(); });
   });
-})();
-
+  return function () { opruim.forEach(function (f) { f(); }); };
+});
 
 /* ---------------------------------------------------------------
    Tabs (/components 22). Markup: .tabs-block met .tabs-list >
    .tab-button (links) en .tab-panels > .tab-panel, in dezelfde
    volgorde. Knop n opent paneel n. Pijltjestoetsen wisselen.
    --------------------------------------------------------------- */
-(function () {
-  document.querySelectorAll(".tabs-block").forEach(function (blok, b) {
+LMO.pagina(function tabs(root) {
+  root.querySelectorAll(".tabs-block").forEach(function (blok) {
+    var b = ++LMO.teller;
     var knoppen = [].slice.call(blok.querySelectorAll(".tab-button"));
     var panelen = [].slice.call(blok.querySelectorAll(".tab-panel"));
     if (!knoppen.length || knoppen.length !== panelen.length) return;
@@ -1169,8 +1184,7 @@ function lmoBouwKaart(blok, bron) {
       panelen[j].hidden = j !== 0;
     });
   });
-})();
-
+});
 
 /* ---------------------------------------------------------------
    List/Grid Toggle (Flip) — Osmo Supply (/components 31).
@@ -1293,72 +1307,321 @@ function initListGridToggle() {
   });
 }
 
-(function () {
+
+LMO.pagina(function listGridKnoppen(root) {
   // Toggle-knoppen die Webflow als <a> zonder href rendert: knop-rol,
   // focusbaar, Enter/Spatie klikt, en geen sprong naar boven.
-  function lmoListGridKnoppen() {
-    document.querySelectorAll("[data-list-grid-toggle]").forEach(function (k) {
-      if (k.tagName === "BUTTON") return;
-      k.setAttribute("role", "button");
-      k.setAttribute("tabindex", "0");
-      k.removeAttribute("type");
-      k.addEventListener("click", function (e) { e.preventDefault(); });
-      k.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); k.click(); }
-      });
+  root.querySelectorAll("[data-list-grid-toggle]").forEach(function (k) {
+    if (k.tagName === "BUTTON" || k.hasAttribute("data-lmo-knop")) return;
+    k.setAttribute("data-lmo-knop", "");
+    k.setAttribute("role", "button");
+    k.setAttribute("tabindex", "0");
+    k.removeAttribute("type");
+    k.addEventListener("click", function (e) { e.preventDefault(); });
+    k.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); k.click(); }
     });
+  });
+});
+
+// Osmo-functies zoeken in het hele document; ze draaien bij de eerste
+// pagina en na elke paginawissel (als de oude pagina al weg is).
+LMO.naWissel(function osmoModules() {
+  initDirectionalListHover();
+  if (document.querySelector("[data-list-grid-init]")) {
+    if (!window.Flip) console.warn("[lmo] GSAP Flip niet geladen: list/grid-toggle staat uit");
+    else initListGridToggle();
   }
-  function start() {
-    if (!document.querySelector("[data-list-grid-init]")) return;
-    lmoListGridKnoppen();
-    if (!window.gsap || !window.Flip) { console.warn("[lmo] GSAP Flip niet geladen: list/grid-toggle staat uit"); return; }
-    initListGridToggle();
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
-  else if (window.gsap) start();
-  else window.addEventListener("load", start);
-})();
+});
+
+
 
 
 /* ---------------------------------------------------------------
-   Page loader (stijl in lmo.css). Haalt het vlak weg als de pagina
-   klaar is (load, of uiterlijk na 1,2 s), met minimaal 300 ms zodat
-   het niet knippert. Bij een klik op een interne link komt het vlak
-   terug en gaat de browser daarna naar de volgende pagina.
+   Paginawissels met Barba — Osmo Supply "Page Name Transition (Wipe)".
+   Een donkergroen paneel schuift omhoog, toont de naam van de pagina
+   (data-page-name op <main>) en schuift door naar boven; de nieuwe
+   pagina komt eronder vandaan. De transitiefuncties (runPage…) zijn
+   van Osmo; het opbouwen en opruimen van de LMO-modules en Webflow
+   per pagina zit in de hooks hieronder.
+   Zonder Barba (of bij een fout) werkt de site met gewone paginaladingen.
    --------------------------------------------------------------- */
+var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 (function () {
-  var html = document.documentElement;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { html.classList.add("lmo-geladen"); return; }
-  var start = (window.performance && performance.now()) || 0;
-  var klaar = false;
-  var weg = function () {
-    if (klaar) return;
-    klaar = true;
-    var wacht = Math.max(0, 300 - (((window.performance && performance.now()) || 0) - start));
-    setTimeout(function () { html.classList.remove("lmo-vertrek"); html.classList.add("lmo-geladen"); }, wacht);
-  };
-  if (document.readyState === "complete") weg();
-  else window.addEventListener("load", weg);
-  setTimeout(weg, 1200);
+  var rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var zet = function (e) { reducedMotion = e.matches; };
+  if (rm.addEventListener) rm.addEventListener("change", zet); else if (rm.addListener) rm.addListener(zet);
+})();
 
-  // Terug via de knop (bfcache): vlak meteen weg.
-  window.addEventListener("pageshow", function (e) {
-    if (e.persisted) { html.classList.remove("lmo-vertrek"); html.classList.add("lmo-geladen"); }
+function lmoTransitieMarkup() {
+  if (document.querySelector("[data-transition-wrap]")) return;
+  var wrap = document.createElement("div");
+  wrap.className = "transition";
+  wrap.setAttribute("data-transition-wrap", "");
+  wrap.setAttribute("aria-hidden", "true");
+  wrap.innerHTML =
+    '<div data-transition-panel class="transition__panel">' +
+      '<span data-transition-label class="transition__label">' +
+        '<span>[ </span><span data-transition-label-text>Welkom</span><span> ]</span>' +
+      "</span>" +
+    "</div>";
+  document.body.appendChild(wrap);
+}
+
+function resetPage(container) {
+  window.scrollTo(0, 0);
+  if (window.lmoLenis) window.lmoLenis.scrollTo(0, { immediate: true, force: true });
+  window.gsap.set(container, { clearProps: "position,top,left,right,transform" });
+  if (window.lmoLenis) { window.lmoLenis.resize(); window.lmoLenis.start(); }
+}
+
+// -----------------------------------------
+// PAGE TRANSITIONS (Osmo)
+// -----------------------------------------
+
+function runPageOnceAnimation(next) {
+  const tl = gsap.timeline();
+
+  tl.call(() => {
+    resetPage(next);
+  }, null, 0);
+
+  return tl;
+}
+
+function runPageLeaveAnimation(current, next) {
+  const transitionWrap = document.querySelector("[data-transition-wrap]");
+  const transitionPanel = transitionWrap.querySelector("[data-transition-panel]");
+  const transitionLabel = transitionWrap.querySelector("[data-transition-label]");
+  const transitionLabelText = transitionWrap.querySelector("[data-transition-label-text]");
+
+  const nextPageName = next.getAttribute("data-page-name")
+  transitionLabelText.innerText = nextPageName || lmoPaginaNaam(next) || "Hi there";
+
+  const tl = gsap.timeline({
+    defaults: { ease: LMO.ease, duration: 0.6 },
+    onComplete: () => { current.remove() }
   });
 
-  document.addEventListener("click", function (e) {
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    var a = e.target.closest && e.target.closest("a[href]");
-    if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
-    var href = a.getAttribute("href");
-    if (!href || href.charAt(0) === "#" || /^(mailto|tel|javascript):/i.test(href)) return;
+  if (reducedMotion) {
+    // Immediate swap behavior if user prefers reduced motion
+    return tl.set(current, { autoAlpha: 0 });
+  }
+
+  tl.set(transitionPanel, {
+    autoAlpha: 1
+  }, 0);
+
+  tl.set(next,{
+    autoAlpha: 0
+  }, 0);
+
+  tl.fromTo(transitionPanel,{
+    yPercent: 0
+  },{
+    yPercent: -100,
+    duration: 0.8,
+  }, 0);
+
+  tl.fromTo(transitionLabel, {
+    autoAlpha: 0
+  },{
+    autoAlpha: 1
+  }, "<+=0.2");
+
+  tl.fromTo(current,{
+    y: "0vh"
+  },{
+    y: "-15vh",
+    duration: 0.8,
+  }, 0);
+
+  return tl;
+}
+
+function runPageEnterAnimation(next){
+  const transitionWrap = document.querySelector("[data-transition-wrap]");
+  const transitionPanel = transitionWrap.querySelector("[data-transition-panel]");
+  const transitionLabel = transitionWrap.querySelector("[data-transition-label]");
+
+  const tl = gsap.timeline({ defaults: { ease: LMO.ease, duration: 0.6 } });
+
+  if (reducedMotion) {
+    // Immediate swap behavior if user prefers reduced motion
+    tl.set(next, { autoAlpha: 1 });
+    tl.add("pageReady")
+    tl.call(resetPage, [next], "pageReady");
+    return new Promise(resolve => tl.call(resolve, null, "pageReady"));
+  }
+
+  tl.add("startEnter", 1.25);
+
+  tl.set(next, {
+    autoAlpha: 1,
+  }, "startEnter");
+
+  tl.fromTo(transitionPanel, {
+    yPercent: -100,
+  },{
+    yPercent: -200,
+    duration: 1,
+    overwrite: "auto",
+    immediateRender: false
+  }, "startEnter");
+
+  tl.set(transitionPanel, {
+    autoAlpha: 0
+  }, ">");
+
+  tl.fromTo(transitionLabel, {
+    autoAlpha: 1
+  },{
+    autoAlpha: 0,
+    duration: 0.4,
+    overwrite: "auto",
+    immediateRender: false
+  }, "startEnter+=0.1");
+
+  tl.from(next, {
+    y: "15vh",
+    duration: 1,
+  }, "startEnter");
+
+  tl.add("pageReady");
+  tl.call(resetPage, [next], "pageReady");
+
+  return new Promise(resolve => {
+    tl.call(resolve, null, "pageReady");
+  });
+}
+
+// Fallback voor de naam als data-page-name ontbreekt (bijv. CMS-pagina's).
+function lmoPaginaNaam(container) {
+  var h1 = container.querySelector("h1");
+  return h1 ? h1.textContent.trim() : "";
+}
+
+// Nav: actieve link (w--current, aria-current) volgt de nieuwe URL.
+function lmoNavBijwerken() {
+  var pad = location.pathname.replace(/\/$/, "") || "/";
+  document.querySelectorAll(".nav a[href], .lmo-menu a[href], footer a[href]").forEach(function (a) {
     var url;
-    try { url = new URL(a.href, location.href); } catch (err) { return; }
-    if (url.origin !== location.origin) return;
-    if (url.pathname === location.pathname && url.search === location.search) return;  // alleen een anker
-    e.preventDefault();
-    html.classList.remove("lmo-geladen");
-    html.classList.add("lmo-vertrek");
-    setTimeout(function () { location.href = url.href; }, 320);
+    try { url = new URL(a.href, location.href); } catch (e) { return; }
+    if (url.origin !== location.origin || url.hash) return;
+    var hier = (url.pathname.replace(/\/$/, "") || "/") === pad;
+    a.classList.toggle("w--current", hier);
+    if (hier) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
+}
+
+// Webflow-scripts (formulieren, links) opnieuw starten voor de nieuwe pagina.
+function lmoWebflowOpnieuw(nextHtml) {
+  try {
+    var doc = new DOMParser().parseFromString(nextHtml, "text/html");
+    var pagina = doc.documentElement.getAttribute("data-wf-page");
+    if (pagina) document.documentElement.setAttribute("data-wf-page", pagina);
+    var meta = doc.querySelector('meta[name="description"]');
+    var hier = document.querySelector('meta[name="description"]');
+    if (meta && hier) hier.setAttribute("content", meta.getAttribute("content"));
+  } catch (e) {}
+  var wf = window.Webflow;
+  if (!wf) return;
+  try {
+    if (wf.destroy) wf.destroy();
+    if (wf.ready) wf.ready();
+    var ix2 = wf.require && wf.require("ix2");
+    if (ix2 && ix2.init) ix2.init();
+  } catch (e) { console.warn("[lmo] Webflow opnieuw starten mislukt", e); }
+}
+
+(function boot() {
+  if (!window.gsap) {
+    if (!boot.wacht) { boot.wacht = true; window.addEventListener("load", boot); }
+    else console.warn("[lmo] GSAP niet geladen");
+    return;
+  }
+  if (boot.klaar) return;
+  boot.klaar = true;
+  var gsap = window.gsap;
+  if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
+  document.documentElement.classList.add("lmo-js");
+
+  if (window.CustomEase) {
+    gsap.registerPlugin(window.CustomEase);
+    window.CustomEase.create("osmo", "0.625, 0.05, 0, 1");
+    LMO.ease = "osmo";
+  } else LMO.ease = "power3.inOut";
+
+  var start = function () {
+    LMO._eenmalig.forEach(function (fn) { LMO._veilig(fn); });
+    var huidigOpruim = LMO.startPagina(document);
+    LMO._naWissel.forEach(function (fn) { LMO._veilig(fn); });
+
+    var container = document.querySelector('[data-barba="container"]');
+    if (!window.barba || !container) return;
+
+    lmoTransitieMarkup();
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    var opruimPer = new Map();
+    opruimPer.set(container, huidigOpruim);
+
+    window.barba.hooks.before(function () {
+      if (LMO.sluitZoeken) LMO._veilig(LMO.sluitZoeken);
+      if (LMO.sluitMenu) LMO._veilig(LMO.sluitMenu);
+    });
+    window.barba.hooks.beforeEnter(function (data) {
+      gsap.set(data.next.container, { position: "fixed", top: 0, left: 0, right: 0 });
+      if (window.lmoLenis) window.lmoLenis.stop();
+      opruimPer.set(data.next.container, LMO.startPagina(data.next.container));
+    });
+    window.barba.hooks.afterLeave(function (data) {
+      var f = opruimPer.get(data.current.container);
+      if (f) { f(); opruimPer.delete(data.current.container); }
+    });
+    window.barba.hooks.enter(function () { lmoNavBijwerken(); });
+    window.barba.hooks.afterEnter(function (data) {
+      lmoWebflowOpnieuw(data.next.html);
+      LMO._naWissel.forEach(function (fn) { LMO._veilig(fn); });
+      if (window.lmoLenis) { window.lmoLenis.resize(); window.lmoLenis.start(); }
+      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      // Toegankelijk: focus naar de nieuwe inhoud, zodat schermlezers en
+      // toetsenbord bovenaan de nieuwe pagina beginnen.
+      var main = data.next.container;
+      if (!main.hasAttribute("tabindex")) main.setAttribute("tabindex", "-1");
+      main.focus({ preventScroll: true });
+    });
+
+    try {
+      window.barba.init({
+        debug: false,
+        timeout: 7000,
+        preventRunning: true,
+        prevent: function (o) {
+          var el = o.el;
+          return el.hasAttribute("data-barba-prevent") || el.hasAttribute("download") ||
+            /\.(pdf|docx?|xlsx?|zip)(\?|$)/i.test(el.getAttribute("href") || "");
+        },
+        transitions: [
+          {
+            name: "default",
+            sync: true,
+            async once(data) {
+              return runPageOnceAnimation(data.next.container);
+            },
+            async leave(data) {
+              return runPageLeaveAnimation(data.current.container, data.next.container);
+            },
+            async enter(data) {
+              return runPageEnterAnimation(data.next.container);
+            }
+          }
+        ]
+      });
+      LMO.barbaActief = true;
+    } catch (err) {
+      console.warn("[lmo] Barba niet gestart; gewone paginaladingen", err);
+    }
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
 })();
