@@ -1572,6 +1572,8 @@ function lmoWebflowOpnieuw(nextHtml) {
       if (LMO.sluitMenu) LMO._veilig(LMO.sluitMenu);
     });
     window.barba.hooks.beforeEnter(function (data) {
+      // Bij de eerste pageload (once) is alles al gestart.
+      if (!data.current || !data.current.container || opruimPer.has(data.next.container)) return;
       gsap.set(data.next.container, { position: "fixed", top: 0, left: 0, right: 0 });
       if (window.lmoLenis) window.lmoLenis.stop();
       opruimPer.set(data.next.container, LMO.startPagina(data.next.container));
@@ -1582,6 +1584,7 @@ function lmoWebflowOpnieuw(nextHtml) {
     });
     window.barba.hooks.enter(function () { lmoNavBijwerken(); });
     window.barba.hooks.afterEnter(function (data) {
+      if (!data.current || !data.current.container) return;  // eerste pageload
       lmoWebflowOpnieuw(data.next.html);
       LMO._naWissel.forEach(function (fn) { LMO._veilig(fn); });
       if (window.lmoLenis) { window.lmoLenis.resize(); window.lmoLenis.start(); }
