@@ -1560,6 +1560,8 @@ function lmoWebflowOpnieuw(nextHtml) {
     var container = document.querySelector('[data-barba="container"]');
     if (!window.barba || !container) return;
 
+    // Webflow kan geen attributen op <body> zetten; de wrapper zetten we hier.
+    document.body.setAttribute("data-barba", "wrapper");
     lmoTransitieMarkup();
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     var opruimPer = new Map();
