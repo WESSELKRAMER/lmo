@@ -147,7 +147,7 @@ De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBou
 Interne links laden zonder herladen via [Barba](https://barba.js.org) met de Osmo-transitie *Page Name Transition (Wipe)*: een donkergroen paneel schuift omhoog met de naam van de volgende pagina (`[ PRAKTIJKVOORBEELDEN ]`), daarna komt de nieuwe pagina eronder vandaan.
 
 - **In Webflow:** op elke pagina staat op `<main>` `data-barba="container"` en `data-page-name="Naam"` (Element settings › Custom attributes). Nieuwe pagina's: dezelfde twee attributen toevoegen, anders laadt die pagina gewoon. Zonder `data-page-name` gebruikt het label de h1.
-- **Nav en footer** staan buiten `<main>` en blijven staan; de actieve nav-link wordt bijgewerkt.
+- **De nav** staat buiten `<main>` en blijft staan; de actieve nav-link wordt bijgewerkt. **De footer** staat binnen `<main>` (laatste element) en wisselt mee met de pagina.
 - **lmo.js** is opgebouwd uit modules: `LMO.eenmalig` (nav, mobiel menu, Lenis), `LMO.pagina(root)` (alles in `<main>`, met opruimfunctie) en `LMO.naWissel` (Osmo-modules, zoeken). Nieuwe code die iets in de pagina doet: als `LMO.pagina(function (root) { … })` schrijven en `root.querySelector` gebruiken.
 - Webflow-formulieren worden na elke wissel opnieuw gestart (`Webflow.destroy()` / `ready()`).
 - Downloads (pdf, docx, xlsx, zip), links met `data-barba-prevent` en links naar andere sites laden gewoon.
