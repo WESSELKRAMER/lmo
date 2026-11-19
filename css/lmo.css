@@ -1102,3 +1102,68 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   .list-grid { --list-grid-columns: 1; }
   [data-list-grid-view="grid"] .list-grid__link { row-gap: 0.5rem; }
 }
+
+/* ---------------------------------------------------------------
+   Page loader. Een rustig donkergroen vlak met een dun koraal
+   streepje dat heen en weer loopt. Het staat er vanaf de eerste
+   paint (pure CSS op body, dus geen flits van de pagina) en lmo.js
+   zet html.lmo-geladen zodra de pagina klaar is; dan vervaagt het.
+   Bij interne links komt het vlak kort terug voor de volgende pagina.
+   - Zonder JS verdwijnt het vanzelf na 2,5 s (lmoLoaderNood).
+   - Bij "minder beweging" is er geen loader.
+   --------------------------------------------------------------- */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+body::before {
+  inset: 0;
+  background-color: var(--_kleuren---groen--900, #182a12);
+  animation: lmoLoaderNood 0.4s ease 2.5s forwards;
+}
+body::after {
+  left: 50%;
+  top: 50%;
+  width: 4.5rem;
+  height: 2px;
+  margin-left: -2.25rem;
+  border-radius: 2px;
+  background-color: rgba(240, 238, 229, 0.18);
+  background-image: linear-gradient(90deg, transparent 0%, var(--_kleuren---koraal--500, #f28658) 0%, var(--_kleuren---koraal--500, #f28658) 40%, transparent 40%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: lmoLoaderLijn 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate, lmoLoaderNood 0.4s ease 2.5s forwards;
+}
+html.lmo-geladen body::before,
+html.lmo-geladen body::after {
+  opacity: 0;
+  visibility: hidden;
+}
+html.lmo-vertrek body::before,
+html.lmo-vertrek body::after {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0s;
+}
+@keyframes lmoLoaderLijn {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+@keyframes lmoLoaderNood {
+  to { opacity: 0; visibility: hidden; }
+}
+html.lmo-geladen body::before,
+html.lmo-geladen body::after,
+html.lmo-vertrek body::before,
+html.lmo-vertrek body::after { animation-name: none; }
+html.lmo-vertrek body::after { animation: lmoLoaderLijn 1.1s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate; }
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { display: none; }
+}
+/* Niet in de Webflow Designer/editor tonen */
+html.w-editor body::before, html.w-editor body::after,
+html.wf-design-mode body::before, html.wf-design-mode body::after { display: none; }

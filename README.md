@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.15.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.16.0/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -27,8 +27,8 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 ```html
 <script src="https://cdn.prod.website-files.com/gsap/3.15.0/Flip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.15.0/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.15.0/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.16.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.16.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -139,6 +139,10 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 | 31 | List/Grid Toggle (Flip) van Osmo Supply: wissel tussen lijst en raster; foto's glijden naar hun nieuwe plek. Data-attributen niet hernoemen. Nodig: GSAP Flip | `list-grid`, `list-grid__toggle`, `list-grid__item`, `[data-list-grid-*]` |
 
 De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBouwstenen` in `lmo.js`).
+
+## Page loader
+
+Bij het laden staat er kort een donkergroen vlak met een dun koraal streepje (minimaal 300 ms, uiterlijk tot 1,2 s na laden); daarna vervaagt het. Bij een klik op een interne link komt het vlak terug en gaat de browser door naar de volgende pagina. Alles in `lmo.css` (body::before/::after) en onderaan `lmo.js`. Zonder JavaScript verdwijnt het vanzelf na 2,5 s, bij "minder beweging" is er geen loader.
 
 ## Smooth scroll (Lenis)
 

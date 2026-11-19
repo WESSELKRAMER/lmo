@@ -1318,3 +1318,47 @@ function initListGridToggle() {
   else if (window.gsap) start();
   else window.addEventListener("load", start);
 })();
+
+
+/* ---------------------------------------------------------------
+   Page loader (stijl in lmo.css). Haalt het vlak weg als de pagina
+   klaar is (load, of uiterlijk na 1,2 s), met minimaal 300 ms zodat
+   het niet knippert. Bij een klik op een interne link komt het vlak
+   terug en gaat de browser daarna naar de volgende pagina.
+   --------------------------------------------------------------- */
+(function () {
+  var html = document.documentElement;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { html.classList.add("lmo-geladen"); return; }
+  var start = (window.performance && performance.now()) || 0;
+  var klaar = false;
+  var weg = function () {
+    if (klaar) return;
+    klaar = true;
+    var wacht = Math.max(0, 300 - (((window.performance && performance.now()) || 0) - start));
+    setTimeout(function () { html.classList.remove("lmo-vertrek"); html.classList.add("lmo-geladen"); }, wacht);
+  };
+  if (document.readyState === "complete") weg();
+  else window.addEventListener("load", weg);
+  setTimeout(weg, 1200);
+
+  // Terug via de knop (bfcache): vlak meteen weg.
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) { html.classList.remove("lmo-vertrek"); html.classList.add("lmo-geladen"); }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest && e.target.closest("a[href]");
+    if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
+    var href = a.getAttribute("href");
+    if (!href || href.charAt(0) === "#" || /^(mailto|tel|javascript):/i.test(href)) return;
+    var url;
+    try { url = new URL(a.href, location.href); } catch (err) { return; }
+    if (url.origin !== location.origin) return;
+    if (url.pathname === location.pathname && url.search === location.search) return;  // alleen een anker
+    e.preventDefault();
+    html.classList.remove("lmo-geladen");
+    html.classList.add("lmo-vertrek");
+    setTimeout(function () { location.href = url.href; }, 320);
+  });
+})();
