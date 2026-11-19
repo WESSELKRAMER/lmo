@@ -1139,3 +1139,12 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
 /* De nieuwe <main> krijgt tijdens de wissel tabindex=-1 voor de focus;
    geen focusring op het hele blok. */
 [data-barba="container"]:focus { outline: none; }
+/* Paginakleur: Webflow zet body op wit en alleen .page is zand. Tijdens
+   de wissel staat de nieuwe <main> los (fixed) en krimpt .page, dan zag
+   je even wit. Daarom html, body en de container zelf ook zand. */
+html, body, [data-barba="container"] {
+  background-color: var(--_kleuren---zand--100, #f0eee5);
+}
+/* Ruimte voor de scrollbar altijd vasthouden: geen sprong als een
+   pagina korter of langer is, of als het menu het scrollen stopzet. */
+html { scrollbar-gutter: stable; }
