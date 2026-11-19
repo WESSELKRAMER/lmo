@@ -18,7 +18,7 @@ Site settings › Custom code:
 
 **Head**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.16.0/css/lmo.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.0/css/lmo.min.css">
 ```
 
 GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aangevinkt.
@@ -26,9 +26,11 @@ GSAP komt uit Webflow zelf: Site settings › GSAP aan, met **ScrollTrigger** aa
 **Footer** (voor `</body>`)
 ```html
 <script src="https://cdn.prod.website-files.com/gsap/3.15.0/Flip.min.js"></script>
+<script src="https://cdn.prod.website-files.com/gsap/3.15.0/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3/dist/barba.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.16.0/js/lmo.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.16.0/js/zoeken.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.0/js/lmo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/WESSELKRAMER/lmo@v0.17.0/js/zoeken.min.js"></script>
 ```
 
 jsDelivr maakt van elk `.css`/`.js`-bestand automatisch een `.min`-versie.
@@ -140,9 +142,16 @@ De pagina `/components` bevat 20 sections om nieuwe pagina's mee op te bouwen: k
 
 De sections komen in beeld met dezelfde animaties als de homepage (`perKlasseBouwstenen` in `lmo.js`).
 
-## Page loader
+## Paginawissels (Barba)
 
-Bij het laden staat er kort een donkergroen vlak met een dun koraal streepje (minimaal 300 ms, uiterlijk tot 1,2 s na laden); daarna vervaagt het. Bij een klik op een interne link komt het vlak terug en gaat de browser door naar de volgende pagina. Alles in `lmo.css` (body::before/::after) en onderaan `lmo.js`. Zonder JavaScript verdwijnt het vanzelf na 2,5 s, bij "minder beweging" is er geen loader.
+Interne links laden zonder herladen via [Barba](https://barba.js.org) met de Osmo-transitie *Page Name Transition (Wipe)*: een donkergroen paneel schuift omhoog met de naam van de volgende pagina (`[ PRAKTIJKVOORBEELDEN ]`), daarna komt de nieuwe pagina eronder vandaan.
+
+- **In Webflow:** op elke pagina staat op `<main>` `data-barba="container"` en `data-page-name="Naam"` (Element settings › Custom attributes). Nieuwe pagina's: dezelfde twee attributen toevoegen, anders laadt die pagina gewoon. Zonder `data-page-name` gebruikt het label de h1.
+- **Nav en footer** staan buiten `<main>` en blijven staan; de actieve nav-link wordt bijgewerkt.
+- **lmo.js** is opgebouwd uit modules: `LMO.eenmalig` (nav, mobiel menu, Lenis), `LMO.pagina(root)` (alles in `<main>`, met opruimfunctie) en `LMO.naWissel` (Osmo-modules, zoeken). Nieuwe code die iets in de pagina doet: als `LMO.pagina(function (root) { … })` schrijven en `root.querySelector` gebruiken.
+- Webflow-formulieren worden na elke wissel opnieuw gestart (`Webflow.destroy()` / `ready()`).
+- Downloads (pdf, docx, xlsx, zip), links met `data-barba-prevent` en links naar andere sites laden gewoon.
+- Bij "minder beweging" wisselt de pagina zonder animatie.
 
 ## Smooth scroll (Lenis)
 
