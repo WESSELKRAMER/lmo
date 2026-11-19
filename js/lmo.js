@@ -1396,7 +1396,7 @@ function runPageLeaveAnimation(current, next) {
   const transitionLabelText = transitionWrap.querySelector("[data-transition-label-text]");
 
   const nextPageName = next.getAttribute("data-page-name")
-  transitionLabelText.innerText = nextPageName || lmoPaginaNaam(next) || "Hi there";
+  const tekens = lmoZetLetters(transitionLabelText, nextPageName || lmoPaginaNaam(next) || "Hi there");
 
   const tl = gsap.timeline({
     defaults: { ease: LMO.ease, duration: 0.6 },
@@ -1426,8 +1426,21 @@ function runPageLeaveAnimation(current, next) {
   tl.fromTo(transitionLabel, {
     autoAlpha: 0
   },{
-    autoAlpha: 1
+    autoAlpha: 1,
+    duration: 0.2
   }, "<+=0.2");
+
+  // Letters komen licht omhoog, één voor één.
+  tl.fromTo(tekens, {
+    yPercent: 45,
+    autoAlpha: 0
+  },{
+    yPercent: 0,
+    autoAlpha: 1,
+    duration: 0.6,
+    ease: "power3.out",
+    stagger: 0.025
+  }, "<");
 
   tl.fromTo(current,{
     y: "0vh"
@@ -1493,6 +1506,29 @@ function runPageEnterAnimation(next){
   return new Promise(resolve => {
     tl.call(resolve, null, "pageReady");
   });
+}
+
+// Zet de naam in het label als losse letters (per woord gegroepeerd, zodat
+// een lange naam alleen tussen woorden afbreekt). Geeft de letters terug.
+function lmoZetLetters(el, tekst) {
+  el.textContent = "";
+  el.setAttribute("aria-label", tekst);
+  var letters = [];
+  tekst.split(" ").forEach(function (woord, i) {
+    if (i) el.appendChild(document.createTextNode(" "));
+    var w = document.createElement("span");
+    w.className = "transition__word";
+    w.setAttribute("aria-hidden", "true");
+    Array.from(woord).forEach(function (ch) {
+      var l = document.createElement("span");
+      l.className = "transition__char";
+      l.textContent = ch;
+      w.appendChild(l);
+      letters.push(l);
+    });
+    el.appendChild(w);
+  });
+  return letters;
 }
 
 // Fallback voor de naam als data-page-name ontbreekt (bijv. CMS-pagina's).

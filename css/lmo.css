@@ -1137,9 +1137,8 @@ html:not(.lmo-accordion) .accordion-panel { height: auto; }
   text-align: center;
   padding: 0 1.25rem;
 }
-@media (max-width: 767px) {
-  .transition__label { font-size: 2.25rem; }
-}
+.transition__word { display: inline-block; white-space: nowrap; }
+.transition__char { display: inline-block; will-change: transform, opacity; }
 /* De nieuwe <main> krijgt tijdens de wissel tabindex=-1 voor de focus;
    geen focusring op het hele blok. */
 [data-barba="container"]:focus { outline: none; }
